@@ -1,0 +1,22 @@
+[debug] [2026-04-14T11:44:48.326Z] ----------------------------------------------------------------------
+[debug] [2026-04-14T11:44:48.329Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\talba\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:create pizza-base --display-name Pizza Base
+[debug] [2026-04-14T11:44:48.329Z] CLI Version:   15.11.0
+[debug] [2026-04-14T11:44:48.329Z] Platform:      win32
+[debug] [2026-04-14T11:44:48.330Z] Node Version:  v24.14.0
+[debug] [2026-04-14T11:44:48.330Z] Time:          Tue Apr 14 2026 14:44:48 GMT+0300 (שעון ישראל (קיץ))
+[debug] [2026-04-14T11:44:48.330Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-14T11:44:48.336Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-14T11:44:48.336Z] > authorizing via signed-in user (talbaranes@gmail.com)
+[debug] [2026-04-14T11:44:48.337Z] Checked if tokens are valid: true, expires at: 1776170662479
+[debug] [2026-04-14T11:44:48.338Z] Checked if tokens are valid: true, expires at: 1776170662479
+[debug] [2026-04-14T11:44:48.338Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-04-14T11:44:48.338Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"pizza-base","name":"Pizza Base"}
+[debug] [2026-04-14T11:44:49.015Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 409
+[debug] [2026-04-14T11:44:49.016Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"error":{"code":409,"message":"Requested entity already exists","status":"ALREADY_EXISTS"}}
+[debug] [2026-04-14T11:44:49.017Z] FirebaseError: Request to https://cloudresourcemanager.googleapis.com/v1/projects had HTTP Error: 409, Requested entity already exists
+    at responseToError (C:\Users\talba\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\talba\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:333:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to create project because there is already a project with ID pizza-base. Please try again with a unique project ID.
