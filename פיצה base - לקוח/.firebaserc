@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "pizza-nemo"
+  },
+  "targets": {
+    "pizza-nemo": {
+      "hosting": {
+        "order": [
+          "pizza-nemo-order"
+        ]
+      }
+    }
+  }
+}

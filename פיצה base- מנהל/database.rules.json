@@ -1,0 +1,54 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "menu": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "toppingGroups": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "deals": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "settings": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "outofstock": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "orderCounter": {
+      ".read": true,
+      ".write": "auth != null || (newData.isNumber() && newData.val() > data.val())"
+    },
+    "orders": {
+      ".read": "auth != null",
+      ".indexOn": ["createdAt", "status"],
+      "$orderId": {
+        ".write": "auth != null || !data.exists()"
+      }
+    },
+    "customers": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "employees": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "suppliers": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "orderSummaries": {
+      ".read": true,
+      ".write": "auth != null"
+    }
+  }
+}
