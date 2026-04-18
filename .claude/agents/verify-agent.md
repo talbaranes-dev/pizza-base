@@ -58,3 +58,11 @@ On any fail:
 1. Do **not** retry forever. One retry after 30s for transient network errors, then report.
 2. Include a suggested next agent in the response — e.g. `"next_agent": "dns-agent"` if DNS doesn't resolve, `"next_agent": "firebase-agent"` if SSL is missing.
 3. The orchestrator decides whether to act on the suggestion.
+
+## Notification on success
+
+When overall = "pass", send a **PushNotification**:
+- Title: `✅ <hostname> באוויר`
+- Body: `HTTP 200, SSL תקין — האתר פעיל`
+
+This lets the user know the site is live without needing to poll or watch the chat.

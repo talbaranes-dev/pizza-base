@@ -11,7 +11,7 @@
 - [🤖] ליצור Hosting sites (`<name>-order`, `<name>-admin`)
 - [🤖] ליצור RTDB ב-region הנכון
 - [🤖] להעלות database.rules.json לפרויקט
-- [✋] ליצור משתמש email + password ב-Firebase Authentication (דרך Firebase Console)
+- [🤖] ליצור משתמש email + password ב-Firebase Authentication (הסוכן יוצר אוטומטית ב-Stage 5.5)
 
 ## 2. פרטי העסק
 - [✋] להחליף `YOUR_PHONE` — טלפון העסק (אין placeholder בHTML, הוסף ידנית)
@@ -30,8 +30,8 @@
 - [✋] להוסיף תמונות מוצרים לתיקיות images/ ולמלא `MENU_IMAGES`
 
 ## 4. סיסמאות
-- [🤖] `APP_PASSWORD_HASH` — SHA-256 של סיסמת האפליקציה (ריק = ללא סיסמה)
-- [🤖] `MANAGER_PASSWORD_HASH` + `MANAGER_PANEL_PASSWORD` — סיסמת פאנל מנהל
+- [🤖] `MANAGER_PASSWORD_HASH` + `MANAGER_PANEL_PASSWORD` — סיסמת פאנל מנהל בלבד
+- ℹ️ אין סיסמת לקוח — כל לקוח מזמין ישירות ללא הרשמה
 
 ## 5. WhatsApp Bot (אופציונלי)
 - [✋] להעלות בוט WhatsApp לשרת (Render.com או אחר)
@@ -46,8 +46,8 @@
 
 ## 8. דומיינים והעלאה
 - [🤖] `YOUR_ORDER_DOMAIN` → `<name>.bybe.co.il`
-- [🤖] `YOUR_ADMIN_DOMAIN` → `<name>-admin.web.app`
-- [🤖] Deploy + DNS + SSL
+- [🤖] `YOUR_ADMIN_DOMAIN` → `<name>-admin.bybe.co.il`
+- [🤖] Deploy + DNS (CNAME לשני הדומיינים) + SSL
 
 ---
 סדר מומלץ: Firebase > פרטי עסק > תפריט > סיסמאות > השאר

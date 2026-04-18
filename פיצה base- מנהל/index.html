@@ -1883,7 +1883,7 @@ async function checkLogin() {
   }
 }
 // ─── SETUP MODE (when Firebase not configured) ───
-const _isSetupMode = FIREBASE_API_KEY === 'YOUR_FIREBASE_API_KEY' || !FIREBASE_API_KEY;
+const _isSetupMode = !FIREBASE_API_KEY || FIREBASE_API_KEY.startsWith('YOUR_');
 
 function enterSetupMode() {
   sessionStorage.setItem('admin_auth','1');

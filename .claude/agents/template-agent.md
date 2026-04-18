@@ -17,7 +17,6 @@ You are the Template Agent. You turn the base template into a ready-to-deploy so
   "reference_name": "pizza-base",
   "business": {
     "manager_password_raw": "secret123",
-    "app_password_raw": "",
     "whatsapp_phone": "972501234567",
     "whatsapp_bot_url": "",
     "google_places_key": ""
@@ -63,7 +62,7 @@ Do these substitutions **inside the target tree only** (never edit the source):
 | `<reference_name>.bybe.co.il` | `<new_name>.bybe.co.il` |
 | `<reference_name>` (remaining) | `<new_name>` |
 | `YOUR_ORDER_DOMAIN` | `<new_name>.bybe.co.il` |
-| `YOUR_ADMIN_DOMAIN` | `<new_name>-admin.web.app` |
+| `YOUR_ADMIN_DOMAIN` | `<new_name>-admin.bybe.co.il` |
 
 Target file globs: `**/*.html`, `**/*.json`, `**/*.firebaserc`, `**/firebase.json`, `**/*.md`.
 
@@ -81,7 +80,6 @@ node -e "const c=require('crypto'); console.log(c.createHash('sha256').update(pr
 
 | Find (exact literal in HTML) | Replace with | Condition |
 |---|---|---|
-| `const APP_PASSWORD_HASH = "";` | `const APP_PASSWORD_HASH = "<sha256(app_password_raw)>";` | if `app_password_raw` non-empty; else leave `""` |
 | `const MANAGER_PASSWORD_HASH = "DEMO_NO_PASSWORD";` | `const MANAGER_PASSWORD_HASH = "<sha256(manager_password_raw)>";` | always (mandatory field) |
 | `const MANAGER_PANEL_PASSWORD = '1';` | `const MANAGER_PANEL_PASSWORD = '<manager_password_raw>';` | always (admin index.html only) |
 | `'YOUR_WHATSAPP_PHONE'` | `'<whatsapp_phone>'` | if `whatsapp_phone` non-empty |
