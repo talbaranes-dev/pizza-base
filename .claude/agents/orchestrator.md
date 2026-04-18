@@ -47,17 +47,12 @@ Run these stages in order. Persist state to `<target_root>\.orchestrator-state.j
 | 7b | **firebase-agent** (browser) | "Add custom domain" → `<new_name>-admin.bybe.co.il` on the **admin** site → Firebase returns **CNAME**. |
 | 8 | **dns-agent** | Add CNAME `<new_name>` → order site CNAME target in JetDNS. JetClients אמור להיות מחובר אוטומטי; עוצר רק אם Session פג. |
 | 8b | **dns-agent** | Add CNAME `<new_name>-admin` → admin site CNAME target in JetDNS (same session). |
-| 9 | **firebase-agent** (browser) | Click **Verify** on the order domain dialog. Firebase confirms + starts SSL. |
-| 9b | **firebase-agent** (browser) | Click **Verify** on the admin domain dialog. Firebase confirms + starts SSL. |
-| 10 | **verify-agent** | Poll both `https://<new_name>.bybe.co.il` and `https://<new_name>-admin.bybe.co.il` until certs are issued (5–15 min typical). Check HTTP 200, SSL valid, DNS resolves. |
+| 9 | **firebase-agent** (browser) | Click **Verify** on the order domain dialog. Firebase confirms + starts SSL provisioning. Once the click returns (verified or "records not yet detected"), move on — do not poll. |
+| 9b | **firebase-agent** (browser) | Click **Verify** on the admin domain dialog. Same — fire-and-forget. |
 
-After stage 10, return two lines to the user:
-```
-✅ Order site → https://<new_name>.bybe.co.il
-✅ Admin site → https://<new_name>-admin.bybe.co.il
-```
+After stage 9b, **stop**. Do **not** run a verify-agent loop waiting for SSL or DNS — that's external-service latency the user cannot influence. Print the "final summary block" (see Stage 0 section) and finish.
 
-Then print the **Manual Steps Remaining** block (see Stage 0 section).
+If the user explicitly asks "הוא כבר באוויר?" / "is it live yet?" later, the verify-agent is available as a standalone check — but it is **not** part of the default orchestrator run.
 
 ## Stage 0 — Collect Business Info
 
@@ -86,13 +81,15 @@ Ask questions interactively in Hebrew. Store all answers in the state file under
 
 **Hours normalization:** For each of the three hours fields, accept free formats (`13:00-23:00`, `13-23`, `13:00 עד 23:00`) and normalize to `HH:MM - HH:MM`. Also accept the literal `סגור` / `closed` / `0` — pass through as `סגור`. If parsing fails, ask the user to confirm before continuing. Derive `auto_off_hour` (integer) from the weekday close time (never from Friday/Saturday, since those are often early-close or closed) — template-agent uses it for `YOUR_AUTO_OFF_HOUR`.
 
-### Collect for manual steps (no HTML placeholder — just store for the end summary):
+### Business contact info — auto-substituted into HTML (template-agent fills `YOUR_PHONE`, `YOUR_ADDRESS`, `YOUR_CITY`):
 
-| Field | Question |
-|-------|----------|
-| `phone` | "מספר טלפון לעסק לתצוגה בתפריט/אתר?" |
-| `address` | "כתובת העסק? (Enter לדלג)" |
-| `city` | "עיר? (Enter לדלג)" |
+| Field | Question | Fills |
+|-------|----------|-------|
+| `phone` | "מספר טלפון לעסק לתצוגה בתפריט/אתר?" | `YOUR_PHONE` — tel: links, accessibility/privacy/terms pages, footer, WhatsApp closed-fallback message |
+| `address` | "כתובת העסק? (רחוב ומספר, Enter לדלג)" | `YOUR_ADDRESS` — legal pages, footer, Waze URL |
+| `city` | "עיר? (Enter לדלג)" | `YOUR_CITY` — legal pages, footer, Waze URL, **delivery-area check** |
+
+> ⚠️ If `city` is skipped, the client-side delivery check becomes `address.includes('YOUR_CITY')` — which will always fail and block every address. Warn the user explicitly if they skip `city`.
 
 ### After all questions, display:
 > "📋 תפריט, תוספות ותמונות יש למלא ידנית דרך Firebase Console לאחר ההקמה (ראה SETUP-GUIDE-ver2.md סעיף 3). ממשיך בהקמה..."
@@ -115,21 +112,32 @@ If response contains `"localId"` → success. If `EMAIL_EXISTS` → user already
 ### Pass to template-agent (Stage 1):
 Include the full `business` object in the template-agent input so it can substitute all placeholders.
 
-### Manual Steps Remaining block (print after Stage 10):
+### Final summary block (print after Stage 9)
+
+Stop as soon as the agent-side work is done. **Do not** block on DNS propagation, Firebase domain verification, or Let's Encrypt SSL issuance — those are external services the user can't speed up. The contract is "agents finished everything they control; the rest is just waiting."
+
+Print:
 
 ```
-📋 שלבים ידניים שנותרו לאחר ההקמה:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. שם העסק בכותרות — חפש "PizzaDemo" ב-index.html והחלף ב-"<display_name>"
-2. טלפון העסק — חפש "YOUR_PHONE" ב-index.html והחלף ב-"<phone>"
-3. כתובת — חפש "YOUR_ADDRESS" ב-index.html והחלף ב-"<address>"
-4. עיר — חפש "YOUR_CITY" ב-index.html והחלף ב-"<city>"
-5. תפריט — מלא מערך MENU, תוספות ותמונות (ראה SETUP-GUIDE-ver2.md סעיף 3)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ הקמת <display_name> הסתיימה מצד הסוכנים.
+
+כתובות סופיות (יהיו חיות תוך 5–60 דקות ככל שה-SSL יונפק ע"י Let's Encrypt):
+  🛒 לקוח:  https://<new_name>.bybe.co.il
+  🔧 מנהל: https://<new_name>-admin.bybe.co.il
+
+חי עכשיו (ללא המתנה ל-DNS):
+  https://<new_name>-order.web.app
+  https://<new_name>-admin.web.app
+
 כניסה למערכת ההפעלה: <admin_email> / <manager_password_raw>
 ```
 
-Print only items the user didn't skip (e.g. skip address/city if they pressed Enter).
+Plus a short "what was done" summary (one line per Stage 1–9).
+
+If the user skipped `phone`/`address`/`city`, also print a short note telling them which placeholders remain in the HTML so they can fill them manually later.
+
+Things still left for the user (not done by agents):
+- תפריט, תוספות, תמונות — דרך פאנל המנהל אחרי כניסה (ראה SETUP-GUIDE-ver2.md סעיף 3).
 
 ---
 

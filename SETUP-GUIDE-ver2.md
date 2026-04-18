@@ -14,12 +14,12 @@
 - [🤖] ליצור משתמש email + password ב-Firebase Authentication (הסוכן יוצר אוטומטית ב-Stage 5.5)
 
 ## 2. פרטי העסק
-- [✋] להחליף `YOUR_PHONE` — טלפון העסק (אין placeholder בHTML, הוסף ידנית)
-- [✋] להחליף `YOUR_ADDRESS` — כתובת מלאה (אין placeholder בHTML, הוסף ידנית)
-- [✋] להחליף `YOUR_CITY` — שם העיר (אין placeholder בHTML, הוסף ידנית)
-- [✋] להחליף "PizzaDemo" — שם העסק בכותרות (אין placeholder בHTML, הוסף ידנית)
+- [🤖] `YOUR_DISPLAY_NAME` — שם העסק בעברית, מופיע בכותרות, Footer, עמודי הצהרת נגישות/פרטיות/תנאי שימוש
+- [🤖] `YOUR_PHONE` — טלפון, מופיע בכל המקומות (tel: links, Waze, הודעות בוט, Footer)
+- [🤖] `YOUR_ADDRESS` — רחוב ומספר (Waze, Footer, עמודים משפטיים)
+- [🤖] `YOUR_CITY` — עיר (Waze, Footer, בדיקת איזור משלוחים בצד לקוח — `address.includes('YOUR_CITY')`)
 
-> הסוכן שואל על פרטים אלה ב-Stage 0 ומציג אותם בסיכום הסופי לצורך העתקה-הדבקה ידנית.
+> הסוכן שואל על פרטים אלה ב-Stage 0 ומחליף אותם אוטומטית בכל ה-HTML. אם המשתמש דילג על שדה מסוים, ה-placeholder נשאר בקוד והאתר עדיין רץ — חוץ מהבדיקה של `YOUR_CITY` שתחסום משלוחים אם העיר חסרה. הסוכן מתריע על זה ב-Stage 0.
 
 ## 3. תפריט
 - [✋] למלא מערך `MENU` בשני קבצי HTML (או דרך seed.js)

@@ -1193,8 +1193,8 @@ async function submitCustomerOrder() {
       showSysAlert('כתובת לא תקינה\nנא למלא רחוב, מספר ועיר');
       return;
     }
-    if(!address.includes('נתניה') && !address.includes('כפריונה')) {
-      showSysAlertWithLink('כרגע אנחנו מקבלים רק הזמנות למשלוחים בתוך נתניה', 'לבירורים מחוץ לנתניה אנא צור קשר לבדיקת משלוח', '0524767553');
+    if(!address.includes('YOUR_CITY')) {
+      showSysAlertWithLink('כרגע אנחנו מקבלים רק הזמנות למשלוחים בתוך YOUR_CITY', 'לבירורים מחוץ לYOUR_CITY אנא צור קשר לבדיקת משלוח', 'YOUR_PHONE');
       return;
     }
   }
@@ -2661,7 +2661,7 @@ if(IS_CUSTOMER) {
   window.addEventListener('DOMContentLoaded', async () => {
     const { isOpen, deliveryMode } = await _checkStoreOpen();
     if(!isOpen) {
-      document.body.innerHTML = '<div style="position:fixed;inset:0;background:#1a1a1a;display:flex;align-items:center;justify-content:center;"><div style="background:#fff;border-radius:20px;padding:40px 32px;width:320px;text-align:center;direction:rtl;"><div style="font-size:3em;margin-bottom:12px;">🍕</div><div style="font-size:1.3em;font-weight:800;color:#ce2b37;margin-bottom:12px;">YOUR_DISPLAY_NAME</div><div style="font-size:1em;color:#555;line-height:1.8;">מצטערים, אנחנו סגורים כרגע להזמנות אונליין.<br><br>אבל אפשר לנסות בטלפון!<br><a href="tel:0524767553" style="color:#ce2b37;font-weight:700;font-size:1.1em;text-decoration:none;">0524767553</a></div></div></div>';
+      document.body.innerHTML = '<div style="position:fixed;inset:0;background:#1a1a1a;display:flex;align-items:center;justify-content:center;"><div style="background:#fff;border-radius:20px;padding:40px 32px;width:320px;text-align:center;direction:rtl;"><div style="font-size:3em;margin-bottom:12px;">🍕</div><div style="font-size:1.3em;font-weight:800;color:#ce2b37;margin-bottom:12px;">YOUR_DISPLAY_NAME</div><div style="font-size:1em;color:#555;line-height:1.8;">מצטערים, אנחנו סגורים כרגע להזמנות אונליין.<br><br>אבל אפשר לנסות בטלפון!<br><a href="tel:YOUR_PHONE" style="color:#ce2b37;font-weight:700;font-size:1.1em;text-decoration:none;">YOUR_PHONE</a></div></div></div>';
       return;
     }
     if(deliveryMode === 'pickupOnly') {
@@ -2731,7 +2731,7 @@ async function checkOrderSummary() {
         <div style="font-weight:700;color:#1e7a3a;margin-bottom:4px;">${typeText}</div>
         <div style="font-weight:600;color:#1e7a3a;">⏱️ ${timeText}</div>
       </div>
-      <div style="text-align:center;color:#bbb;font-size:0.75em;margin-top:16px;">פיצה דמו 🍕</div>
+      <div style="text-align:center;color:#bbb;font-size:0.75em;margin-top:16px;">YOUR_DISPLAY_NAME 🍕</div>
     </div>`;
   } catch(e) {
     overlay.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:3em;margin-bottom:12px;">⚠️</div><div style="color:#888;">שגיאה בטעינת הסיכום</div></div>';
@@ -4297,7 +4297,7 @@ async function offlinePoll() {
   const now = Date.now();
   if(_lastReplyTime[chatId] && now - _lastReplyTime[chatId] < 3600000) return;
   _lastReplyTime[chatId] = now;
-  await botSend(chatId, 'היי \u{1F494} לצערנו אנחנו סגורים כרגע להזמנות אונליין, אבל אפשר לנסות ליצור איתנו קשר בטלפון! 0524767553');
+  await botSend(chatId, 'היי \u{1F494} לצערנו אנחנו סגורים כרגע להזמנות אונליין, אבל אפשר לנסות ליצור איתנו קשר בטלפון! YOUR_PHONE');
 }
 
 // בטעינה — בדוק מצב בוט מ-Firebase ושחזר
@@ -8603,8 +8603,8 @@ if(IS_CUSTOMER) {
   // ===== ACCESSIBILITY STATEMENT =====
   window.showAccessibilityStatement = function(){
     showLegalPage('הצהרת נגישות', `
-      <h3 style="color:#1e7a3a;margin-bottom:12px;">הצהרת נגישות - פיצה דמו</h3>
-      <p>פיצה דמו מחויבת להנגשת האתר לאנשים עם מוגבלויות, בהתאם לחוק שוויון זכויות לאנשים עם מוגבלות, תשנ"ח-1998 ולתקנות שהותקנו מכוחו.</p>
+      <h3 style="color:#1e7a3a;margin-bottom:12px;">הצהרת נגישות - YOUR_DISPLAY_NAME</h3>
+      <p>YOUR_DISPLAY_NAME מחויבת להנגשת האתר לאנשים עם מוגבלויות, בהתאם לחוק שוויון זכויות לאנשים עם מוגבלות, תשנ"ח-1998 ולתקנות שהותקנו מכוחו.</p>
       <p><strong>פעולות שננקטו להנגשת האתר:</strong></p>
       <ul style="margin:8px 20px;list-style:disc;">
         <li>התאמה לקוראי מסך</li>
@@ -8626,9 +8626,9 @@ if(IS_CUSTOMER) {
       <p><strong>רמת הנגישות:</strong> AA (בהתאם להנחיות WCAG 2.1)</p>
       <p><strong>פרטי קשר לפניות בנושא נגישות:</strong></p>
       <ul style="margin:8px 20px;list-style:disc;">
-        <li>פיצה דמו</li>
-        <li>כתובת: ישראל</li>
-        <li>טלפון: 0524767553</li>
+        <li>YOUR_DISPLAY_NAME</li>
+        <li>כתובת: YOUR_ADDRESS, YOUR_CITY</li>
+        <li>טלפון: YOUR_PHONE</li>
       </ul>
       <p>אם נתקלת בבעיית נגישות באתר, נשמח לשמוע ולטפל בהקדם.</p>
     `);
@@ -8637,11 +8637,11 @@ if(IS_CUSTOMER) {
   // ===== PRIVACY POLICY =====
   window.showPrivacyPolicy = function(){
     showLegalPage('מדיניות פרטיות', `
-      <h3 style="color:#1e7a3a;margin-bottom:12px;">מדיניות פרטיות - פיצה דמו</h3>
+      <h3 style="color:#1e7a3a;margin-bottom:12px;">מדיניות פרטיות - YOUR_DISPLAY_NAME</h3>
       <p><strong>עדכון אחרון:</strong> מרץ 2026</p>
 
       <h4 style="margin:16px 0 8px;color:#333;">1. כללי</h4>
-      <p>פיצה דמו ("העסק") מכבדת את פרטיות המשתמשים באתר. מדיניות זו מסבירה כיצד אנו אוספים, משתמשים ומגנים על מידע אישי.</p>
+      <p>YOUR_DISPLAY_NAME ("העסק") מכבדת את פרטיות המשתמשים באתר. מדיניות זו מסבירה כיצד אנו אוספים, משתמשים ומגנים על מידע אישי.</p>
 
       <h4 style="margin:16px 0 8px;color:#333;">2. מידע שאנו אוספים</h4>
       <ul style="margin:8px 20px;list-style:disc;">
@@ -8673,21 +8673,21 @@ if(IS_CUSTOMER) {
       <p>בהתאם לחוק הגנת הפרטיות, תשמ"א-1981, הנך זכאי לעיין במידע שנאסף עליך ולבקש את תיקונו או מחיקתו.</p>
 
       <h4 style="margin:16px 0 8px;color:#333;">8. יצירת קשר</h4>
-      <p>לפניות בנושא פרטיות: טלפון 0524767553, ישראל.</p>
+      <p>לפניות בנושא פרטיות: טלפון YOUR_PHONE, ישראל.</p>
     `);
   };
 
   // ===== TERMS OF USE =====
   window.showTermsOfUse = function(){
     showLegalPage('תנאי שימוש', `
-      <h3 style="color:#1e7a3a;margin-bottom:12px;">תנאי שימוש - פיצה דמו</h3>
+      <h3 style="color:#1e7a3a;margin-bottom:12px;">תנאי שימוש - YOUR_DISPLAY_NAME</h3>
       <p><strong>עדכון אחרון:</strong> מרץ 2026</p>
 
       <h4 style="margin:16px 0 8px;color:#333;">1. כללי</h4>
-      <p>השימוש באתר פיצה דמו ("האתר") כפוף לתנאי שימוש אלה. גלישה באתר והזמנה דרכו מהווה הסכמה לתנאים.</p>
+      <p>השימוש באתר YOUR_DISPLAY_NAME ("האתר") כפוף לתנאי שימוש אלה. גלישה באתר והזמנה דרכו מהווה הסכמה לתנאים.</p>
 
       <h4 style="margin:16px 0 8px;color:#333;">2. השירות</h4>
-      <p>האתר מאפשר הזמנת מוצרי מזון מפיצה דמו. התפריט, המחירים והמבצעים עשויים להשתנות ללא הודעה מוקדמת.</p>
+      <p>האתר מאפשר הזמנת מוצרי מזון מYOUR_DISPLAY_NAME. התפריט, המחירים והמבצעים עשויים להשתנות ללא הודעה מוקדמת.</p>
       <p>התמונות המוצגות באתר הן להמחשה בלבד ואינן מהוות ייצוג מדויק של המוצר המוגמר. המוצרים עשויים להיראות שונה מהתמונות.</p>
 
       <h4 style="margin:16px 0 8px;color:#333;">3. הזמנות</h4>
@@ -8707,10 +8707,10 @@ if(IS_CUSTOMER) {
       <p>העסק אינו אחראי לעיכובים שנגרמים כתוצאה מנסיבות שאינן בשליטתו. המוצרים עלולים להכיל אלרגנים.</p>
 
       <h4 style="margin:16px 0 8px;color:#333;">7. קניין רוחני</h4>
-      <p>כל התכנים באתר, לרבות עיצוב, לוגו וטקסטים, הם רכוש פיצה דמו ואין להעתיקם ללא אישור.</p>
+      <p>כל התכנים באתר, לרבות עיצוב, לוגו וטקסטים, הם רכוש YOUR_DISPLAY_NAME ואין להעתיקם ללא אישור.</p>
 
       <h4 style="margin:16px 0 8px;color:#333;">8. יצירת קשר</h4>
-      <p>טלפון: 0524767553 | כתובת: ישראל</p>
+      <p>טלפון: YOUR_PHONE | כתובת: YOUR_ADDRESS, YOUR_CITY</p>
     `);
   };
 
@@ -8719,15 +8719,15 @@ if(IS_CUSTOMER) {
   footer.id = 'site-footer';
   footer.style.cssText = 'background:#333;color:#fff;padding:24px 20px 20px;font-family:Rubik,sans-serif;direction:rtl;text-align:center;margin-top:40px;';
   footer.innerHTML = `
-    <div style="font-size:1.1em;font-weight:700;margin-bottom:8px;">פיצה דמו</div>
-    <div style="font-size:0.85em;color:#ccc;margin-bottom:4px;">ישראל | טלפון: 0524767553</div>
+    <div style="font-size:1.1em;font-weight:700;margin-bottom:8px;">YOUR_DISPLAY_NAME</div>
+    <div style="font-size:0.85em;color:#ccc;margin-bottom:4px;">YOUR_ADDRESS, YOUR_CITY | טלפון: YOUR_PHONE</div>
     <div style="font-size:0.85em;color:#ffd966;margin-top:8px;margin-bottom:4px;">
       <div style="font-weight:700;margin-bottom:2px;">שעות פעילות:</div>
       <div>ראשון - חמישי: YOUR_HOURS_WEEKDAY</div>
       <div>שישי: YOUR_HOURS_FRIDAY</div>
       <div>מוצ"ש: YOUR_HOURS_SATURDAY</div>
     </div>
-    ${IS_CUSTOMER ? '<a href="tel:0524767553" style="display:inline-flex;align-items:center;gap:8px;background:#1e7a3a;color:#fff;text-decoration:none;font-size:0.95em;font-weight:700;padding:10px 24px;border-radius:25px;margin-top:10px;"><span style=\\"font-size:1.2em;\\">📞</span> התקשרו אלינו</a>' : ''}
+    ${IS_CUSTOMER ? '<a href="tel:YOUR_PHONE" style="display:inline-flex;align-items:center;gap:8px;background:#1e7a3a;color:#fff;text-decoration:none;font-size:0.95em;font-weight:700;padding:10px 24px;border-radius:25px;margin-top:10px;"><span style=\\"font-size:1.2em;\\">📞</span> התקשרו אלינו</a>' : ''}
     <div style="margin-top:10px;">
       <a href="javascript:void(0)" style="display:inline-flex;align-items:center;gap:6px;color:#33ccff;text-decoration:none;font-size:0.85em;">🗺️ נווט אלינו עם Waze</a>
     </div>
@@ -8736,7 +8736,7 @@ if(IS_CUSTOMER) {
       <a href="javascript:void(0)" onclick="showPrivacyPolicy()" style="color:#8fc9ff;text-decoration:underline;font-size:0.85em;cursor:pointer;">מדיניות פרטיות</a>
       <a href="javascript:void(0)" onclick="showTermsOfUse()" style="color:#8fc9ff;text-decoration:underline;font-size:0.85em;cursor:pointer;">תנאי שימוש</a>
     </div>
-    <div style="font-size:0.75em;color:#888;margin-top:12px;">&copy; 2024 פיצה דמו - כל הזכויות שמורות</div>
+    <div style="font-size:0.75em;color:#888;margin-top:12px;">&copy; 2024 YOUR_DISPLAY_NAME - כל הזכויות שמורות</div>
   `;
   document.body.appendChild(footer);
 
