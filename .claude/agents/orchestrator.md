@@ -42,6 +42,7 @@ Run these stages in order. Persist state to `<target_root>\.orchestrator-state.j
 | 4 | **template-agent** (2nd pass) | Inserts the real API key + DB URL into the cloned files. |
 | 5 | **deploy-agent** (early) | Deploy both hosting sites + DB rules to *.web.app. This validates the whole setup works before DNS is involved. |
 | 5.5 | **orchestrator (self)** | Create Firebase Auth user (`admin_email` + `manager_password`) via REST API so the admin panel is immediately accessible. |
+| 5.6 | **orchestrator (self)** | Seed initial RTDB state: `settings/storeOpen = true` so the customer site shows OPEN immediately (otherwise the template reads `null` and interprets as closed). Do NOT seed `settings/autoSchedule` — that is an optional time-based feature the user can enable later via the admin panel if they want it. Manual control via the admin's "הפעל בוט" / "כבה בוט" button writes to `storeOpen` directly and is the default flow. Use: `echo '{"storeOpen": true, "deliveryMode": null}' \| firebase database:set //settings --project <new_name> --force` (note: on MSYS-style bash on Windows the leading `/` gets mangled, use `//settings`). |
 | 6 | **domain-agent** | Confirms `bybe.co.il` nameservers are JetDNS. Warns if not. |
 | 7 | **firebase-agent** (browser) | "Add custom domain" → `<new_name>.bybe.co.il` on the **order** site → Firebase returns **CNAME** (Quick setup for subdomains). |
 | 7b | **firebase-agent** (browser) | "Add custom domain" → `<new_name>-admin.bybe.co.il` on the **admin** site → Firebase returns **CNAME**. |
