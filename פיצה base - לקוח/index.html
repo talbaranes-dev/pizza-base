@@ -4213,12 +4213,12 @@ function stopBot() {
   updateBotBtnIcon(null);
 }
 
-// כיבוי אוטומטי ב-23:00
+// כיבוי אוטומטי ב-YOUR_AUTO_OFF_HOUR:00 (ברירת מחדל)
 setInterval(() => {
   const now = new Date();
-  if(botActive && now.getHours() === 23 && now.getMinutes() === 0) {
+  if(botActive && now.getHours() === YOUR_AUTO_OFF_HOUR && now.getMinutes() === 0) {
     stopBot();
-    showToast('🤖 הבוט נכבה אוטומטית — 23:00');
+    showToast('🤖 הבוט נכבה אוטומטית — YOUR_AUTO_OFF_HOUR:00');
   }
 }, 30000);
 
@@ -8723,8 +8723,8 @@ if(IS_CUSTOMER) {
     <div style="font-size:0.85em;color:#ccc;margin-bottom:4px;">ישראל | טלפון: 0524767553</div>
     <div style="font-size:0.85em;color:#ffd966;margin-top:8px;margin-bottom:4px;">
       <div style="font-weight:700;margin-bottom:2px;">שעות פעילות:</div>
-      <div>ראשון - חמישי: 13:00 - 23:00</div>
-      <div>מוצ"ש: 19:00 - 23:00</div>
+      <div>ראשון - חמישי: YOUR_HOURS_WEEKDAY</div>
+      <div>מוצ"ש: YOUR_HOURS_WEEKEND</div>
     </div>
     ${IS_CUSTOMER ? '<a href="tel:0524767553" style="display:inline-flex;align-items:center;gap:8px;background:#1e7a3a;color:#fff;text-decoration:none;font-size:0.95em;font-weight:700;padding:10px 24px;border-radius:25px;margin-top:10px;"><span style=\\"font-size:1.2em;\\">📞</span> התקשרו אלינו</a>' : ''}
     <div style="margin-top:10px;">

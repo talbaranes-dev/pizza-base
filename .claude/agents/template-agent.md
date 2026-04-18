@@ -55,15 +55,18 @@ Use `cp -r` (Bash) or `robocopy` on Windows. Preserve file timestamps. Exclude `
 
 Do these substitutions **inside the target tree only** (never edit the source):
 
-| Find (literal) | Replace with |
-|---|---|
-| `YOUR_PROJECT_ID-order` | `<new_name>-order` |
-| `YOUR_PROJECT_ID-admin` | `<new_name>-admin` |
-| `YOUR_PROJECT_ID.bybe.co.il` | `<new_name>.bybe.co.il` |
-| `YOUR_PROJECT_ID` (remaining) | `<new_name>` |
-| `YOUR_DISPLAY_NAME` | `<display_name>` |
-| `YOUR_ORDER_DOMAIN` | `<new_name>.bybe.co.il` |
-| `YOUR_ADMIN_DOMAIN` | `<new_name>-admin.bybe.co.il` |
+| Find (literal) | Replace with | Default if business field empty |
+|---|---|---|
+| `YOUR_PROJECT_ID-order` | `<new_name>-order` | — |
+| `YOUR_PROJECT_ID-admin` | `<new_name>-admin` | — |
+| `YOUR_PROJECT_ID.bybe.co.il` | `<new_name>.bybe.co.il` | — |
+| `YOUR_PROJECT_ID` (remaining) | `<new_name>` | — |
+| `YOUR_DISPLAY_NAME` | `<display_name>` | — |
+| `YOUR_ORDER_DOMAIN` | `<new_name>.bybe.co.il` | — |
+| `YOUR_ADMIN_DOMAIN` | `<new_name>-admin.bybe.co.il` | — |
+| `YOUR_HOURS_WEEKDAY` | `<business.hours_weekday>` | `13:00 - 23:00` |
+| `YOUR_HOURS_WEEKEND` | `<business.hours_weekend>` | `19:00 - 23:00` |
+| `YOUR_AUTO_OFF_HOUR` | integer hour derived from `business.hours_weekday` close time, or `<business.auto_off_hour>` if explicitly set | `23` |
 
 Target file globs: `**/*.html`, `**/*.json`, `**/*.firebaserc`, `**/firebase.json`, `**/*.md`.
 
