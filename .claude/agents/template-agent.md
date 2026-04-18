@@ -67,12 +67,13 @@ Do these substitutions **inside the target tree only** (never edit the source):
 | `YOUR_HOURS_WEEKDAY` | `<business.hours_weekday>` | `13:00 - 23:00` |
 | `YOUR_HOURS_FRIDAY` | `<business.hours_friday>` | `13:00 - 15:00` |
 | `YOUR_HOURS_SATURDAY` | `<business.hours_saturday>` | `19:00 - 23:00` |
-| `YOUR_AUTO_OFF_HOUR` | integer hour derived from `business.hours_weekday` close time, or `<business.auto_off_hour>` if explicitly set | `23` |
 | `YOUR_PHONE` | `<business.phone>` | leave placeholder |
 | `YOUR_ADDRESS` | `<business.address>` | leave placeholder |
 | `YOUR_CITY` | `<business.city>` | leave placeholder |
 
 For the three hours fields, if the user answers `סגור` / `closed` / `0`, substitute the literal string `סגור` (not a time range).
+
+**Hours are display-only.** They render as static text at the bottom of both the customer and admin pages and have **no effect on whether the customer site shows open or closed**. The open/closed state is controlled exclusively by `settings/storeOpen` in RTDB, which the admin's "הפעל בוט" / "כבה בוט" button writes. There is no longer a `YOUR_AUTO_OFF_HOUR` placeholder or a time-based bot shutdown — the old `setInterval` that force-closed the bot at a fixed hour was removed (contradicted manual-only control). If the user wants time-based auto-open/close in the future, they configure it via the admin's WhatsApp settings panel (which writes `settings/autoSchedule`), and it only fires while the admin page is open.
 
 `YOUR_PHONE` is used in display text, `tel:` links, Waze URLs, and the WhatsApp-closed fallback message. `YOUR_ADDRESS` + `YOUR_CITY` are used in accessibility/privacy/terms pages, the footer, Waze navigation URL, and the client-side delivery-area check (`address.includes('YOUR_CITY')`). If the user leaves any of them empty, the placeholders stay in the HTML — the site still runs but the delivery check effectively accepts every address.
 

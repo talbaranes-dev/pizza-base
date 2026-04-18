@@ -80,7 +80,9 @@ Ask questions interactively in Hebrew. Store all answers in the state file under
 | `hours_friday` | "שעות פעילות יום שישי? (דוגמה: `13:00-15:00`, כתוב `סגור` אם סגורים, Enter = ברירת מחדל)" | `YOUR_HOURS_FRIDAY` | `13:00 - 15:00` |
 | `hours_saturday` | "שעות פעילות שבת / מוצ\"ש? (דוגמה: `19:00-23:00`, כתוב `סגור` אם סגורים, Enter = ברירת מחדל)" | `YOUR_HOURS_SATURDAY` | `19:00 - 23:00` |
 
-**Hours normalization:** For each of the three hours fields, accept free formats (`13:00-23:00`, `13-23`, `13:00 עד 23:00`) and normalize to `HH:MM - HH:MM`. Also accept the literal `סגור` / `closed` / `0` — pass through as `סגור`. If parsing fails, ask the user to confirm before continuing. Derive `auto_off_hour` (integer) from the weekday close time (never from Friday/Saturday, since those are often early-close or closed) — template-agent uses it for `YOUR_AUTO_OFF_HOUR`.
+**Hours normalization:** For each of the three hours fields, accept free formats (`13:00-23:00`, `13-23`, `13:00 עד 23:00`) and normalize to `HH:MM - HH:MM`. Also accept the literal `סגור` / `closed` / `0` — pass through as `סגור`. If parsing fails, ask the user to confirm before continuing.
+
+**Hours are display-only — they do not drive any open/closed logic.** The order site's open/closed state is controlled exclusively by `settings/storeOpen` in RTDB (written by the admin's "הפעל בוט" / "כבה בוט" button). The old time-based auto-shutdown (`YOUR_AUTO_OFF_HOUR` + `setInterval`) was removed from the template — do NOT derive `auto_off_hour` and do NOT pass it to template-agent.
 
 ### Business contact info — auto-substituted into HTML (template-agent fills `YOUR_PHONE`, `YOUR_ADDRESS`, `YOUR_CITY`):
 

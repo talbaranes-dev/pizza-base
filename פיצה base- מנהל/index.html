@@ -4528,14 +4528,6 @@ function stopBot() {
   updateBotBtnIcon(null);
 }
 
-// כיבוי אוטומטי ב-YOUR_AUTO_OFF_HOUR:00 (ברירת מחדל)
-setInterval(() => {
-  const now = new Date();
-  if(botActive && now.getHours() === YOUR_AUTO_OFF_HOUR && now.getMinutes() === 0) {
-    stopBot();
-    showToast('🤖 הבוט נכבה אוטומטית — YOUR_AUTO_OFF_HOUR:00');
-  }
-}, 30000);
 
 function toggleBot() {
   if(botActive) { stopBot(); return; }
