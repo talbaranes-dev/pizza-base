@@ -44,8 +44,8 @@ You are the Deploy Agent. You take code → live site. Nothing else.
 {
   "status": "ok" | "error",
   "target": "order",
-  "deploy_url": "https://pizza-nemo-order.web.app",
-  "custom_url": "https://pizza-nemo.bybe.co.il",
+  "deploy_url": "https://pizza-example-order.web.app",
+  "custom_url": "https://pizza-example.bybe.co.il",
   "git_sha": "abc1234",
   "released_at": "2026-04-17T21:14:00Z"
 }

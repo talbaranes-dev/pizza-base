@@ -4,13 +4,20 @@ You are working in the **pizza-base template repo**. This file is loaded automat
 
 ## Goal
 
-Given a new pizzeria name (e.g. `pizza-jordi`), produce a live site at `https://<name>.bybe.co.il`, end-to-end, using the agents in `.claude/agents/`.
+Given a new pizzeria name (e.g. `pizza-example`), produce a live site at `https://<name>.bybe.co.il`, end-to-end, using the agents in `.claude/agents/`.
 
 ## Folder layout under `C:\Users\jorde\OneDrive\שולחן העבודה\BYBE\`
 
-- **`pizza-base-main\`** — this directory. Pristine template + agents + docx. **Never edit the source folders inside here when provisioning a new pizzeria** — clone them into a new directory instead.
-- **`pizza nemo\`** — reference deployed pizzeria at https://pizza-nemo.bybe.co.il/. Left as-is for comparison.
+- **`pizza-base-main\`** — this directory. Pristine template + agents + docx. The template HTML/`.firebaserc` use pure placeholders (`YOUR_PROJECT_ID`, `YOUR_DISPLAY_NAME`) that template-agent replaces during cloning. **Never edit the source folders inside here when provisioning a new pizzeria** — clone them into a new directory instead.
 - **`<new-name>\`** — created fresh by the orchestrator/template-agent for each new pizzeria. Never pre-exists.
+
+## Live reference (visual/sanity check only — not a code source)
+
+Two always-on demo sites for visual comparison of what a working deployment looks like:
+- Customer: https://pizzademoorder.bybe.co.il/
+- Manager: https://pizzademoadmin.bybe.co.il/
+
+Use them for UI comparison and regression checks. The template source-of-truth remains the placeholder files in `pizza-base-main` — never clone from the demo URLs.
 
 ## How to invoke
 
@@ -28,8 +35,7 @@ If the user is invoking via Dispatch (fresh session with no memory of earlier co
 
 ## What NOT to do
 
-- Don't reuse existing Firebase project IDs (`pizza-nemo`, `sapak-app`). Every new pizzeria = new project.
-- Don't edit `pizza nemo\` (the reference) while provisioning.
+- Don't reuse an existing Firebase project ID (`sapak-app`, or any other project already in your account). Every new pizzeria = new project.
 - Don't skip the custom-domain stage even if `*.web.app` works — the contract is `<name>.bybe.co.il`.
 - Don't commit/push without the user asking.
 

@@ -10,7 +10,7 @@ You are the Verify Agent. You prove the site works — or prove it doesn't. You 
 
 ```json
 {
-  "url": "https://pizza-nemo.bybe.co.il",
+  "url": "https://pizza-example.bybe.co.il",
   "checks": ["http", "ssl", "dns", "lighthouse"]
 }
 ```
@@ -41,7 +41,7 @@ If `checks` is omitted, run `["http", "ssl", "dns"]` — skip lighthouse unless 
 
 ```json
 {
-  "url": "https://pizza-nemo.bybe.co.il",
+  "url": "https://pizza-example.bybe.co.il",
   "overall": "pass" | "fail",
   "checks": {
     "http": { "status": "pass", "code": 200, "ttfb_ms": 340 },

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>🍕 Pizza Nemo — מערכת הזמנות</title>
+<title>🍕 YOUR_DISPLAY_NAME — מערכת הזמנות</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>"/>
 <script>
 // Redirect old domains to new ones (disabled until new domains are active)
@@ -1088,7 +1088,7 @@ if(new URLSearchParams(window.location.search).has('order')) {
 <div id="login-screen">
   <div>
     <div id="login-screen-logo">🍕</div>
-    <div id="login-screen-title">Pizza Nemo</div>
+    <div id="login-screen-title">YOUR_DISPLAY_NAME</div>
     <div id="login-screen-subtitle">מערכת הזמנות</div>
     <input type="email" id="login-email" placeholder="אימייל..."
       onkeydown="if(event.key==='Enter') document.getElementById('login-password').focus()"
@@ -1409,7 +1409,7 @@ function printOrderFromData(order, estimatedMinutes) {
     estStr = String(est.getHours()).padStart(2,'0')+':'+String(est.getMinutes()).padStart(2,'0');
   }
 
-  let lines = ["Pizza Nemo", dashes(),
+  let lines = ["YOUR_DISPLAY_NAME", dashes(),
     order.type==='delivery'?"*** משלוח ***":"*** איסוף ***", dashes(),
     line("הזמנה:","#"+order.id,W), line("תאריך:",order.date||'',W), line("שעה:",order.time||'',W)];
   if(estStr) lines.push(line("שעה מוערכת ל"+typeStr+":", estStr, W));
@@ -1481,7 +1481,7 @@ function printOrderFromData(order, estimatedMinutes) {
 
   const txt = lines.join("\n");
   const headerIdx = lines.findIndex(l=>/^\d+\./.test(l));
-  // בנה header HTML עם Pizza Nemo ממורכז
+  // בנה header HTML עם YOUR_DISPLAY_NAME ממורכז
   const headerRaw = lines.slice(0, headerIdx>0?headerIdx:0);
   const headerHtml = headerRaw.map((l,hi)=>{
     if(hi===0) return '<p style="text-align:center;font-size:16pt;font-weight:900;margin:2mm 0;">'+l+'</p>';
@@ -1796,7 +1796,7 @@ window.addEventListener('load', () => {
 
 <header>
   <button class="nav-btn" id="btn-hamburger" onclick="toggleMenu()" style="position:relative;"><span class="nav-icon">☰</span></button>
-  <div class="logo">🍕 Pizza Nemo</div>
+  <div class="logo">🍕 YOUR_DISPLAY_NAME</div>
 </header>
 <script>
 // Banner removed for demo
@@ -2469,7 +2469,7 @@ window.addEventListener('load', () => {
     <h3>📣 שליחת הודעה שיווקית</h3>
     <div style="margin-bottom:12px;">
       <label class="field-label">תוכן ההודעה</label>
-      <textarea class="inp" id="marketing-message" style="min-height:100px;" placeholder="כתוב את ההודעה שתישלח...">היי [שם]! 🍕 Pizza Nemo כאן
+      <textarea class="inp" id="marketing-message" style="min-height:100px;" placeholder="כתוב את ההודעה שתישלח...">היי [שם]! 🍕 YOUR_DISPLAY_NAME כאן
 יש לנו מבצע מיוחד רק בשבילך היום 🔥</textarea>
     </div>
     <div style="font-size:0.78em;color:#888;margin-top:4px;">💡 השתמש ב-[שם] להכנסת שם הלקוח אוטומטית</div>
@@ -2649,9 +2649,9 @@ function computeAutoSchedule(schedule) {
 // בדוק אם החנות פתוחה (רק ללקוח) — קורא ישירות מ-Firebase
 async function _checkStoreOpen() {
   try {
-    const res = await fetch('https://pizza-nemo-default-rtdb.europe-west1.firebasedatabase.app/settings/storeOpen.json');
+    const res = await fetch('https://YOUR_PROJECT_ID-default-rtdb.europe-west1.firebasedatabase.app/settings/storeOpen.json');
     const isOpen = await res.json();
-    const dRes = await fetch('https://pizza-nemo-default-rtdb.europe-west1.firebasedatabase.app/settings/deliveryMode.json');
+    const dRes = await fetch('https://YOUR_PROJECT_ID-default-rtdb.europe-west1.firebasedatabase.app/settings/deliveryMode.json');
     const deliveryMode = dRes.ok ? await dRes.json() : null;
     return { isOpen: !!isOpen, deliveryMode };
   } catch(e) { return { isOpen: true, deliveryMode: null }; }
@@ -2661,7 +2661,7 @@ if(IS_CUSTOMER) {
   window.addEventListener('DOMContentLoaded', async () => {
     const { isOpen, deliveryMode } = await _checkStoreOpen();
     if(!isOpen) {
-      document.body.innerHTML = '<div style="position:fixed;inset:0;background:#1a1a1a;display:flex;align-items:center;justify-content:center;"><div style="background:#fff;border-radius:20px;padding:40px 32px;width:320px;text-align:center;direction:rtl;"><div style="font-size:3em;margin-bottom:12px;">🍕</div><div style="font-size:1.3em;font-weight:800;color:#ce2b37;margin-bottom:12px;">Pizza Nemo</div><div style="font-size:1em;color:#555;line-height:1.8;">מצטערים, אנחנו סגורים כרגע להזמנות אונליין.<br><br>אבל אפשר לנסות בטלפון!<br><a href="tel:0524767553" style="color:#ce2b37;font-weight:700;font-size:1.1em;text-decoration:none;">0524767553</a></div></div></div>';
+      document.body.innerHTML = '<div style="position:fixed;inset:0;background:#1a1a1a;display:flex;align-items:center;justify-content:center;"><div style="background:#fff;border-radius:20px;padding:40px 32px;width:320px;text-align:center;direction:rtl;"><div style="font-size:3em;margin-bottom:12px;">🍕</div><div style="font-size:1.3em;font-weight:800;color:#ce2b37;margin-bottom:12px;">YOUR_DISPLAY_NAME</div><div style="font-size:1em;color:#555;line-height:1.8;">מצטערים, אנחנו סגורים כרגע להזמנות אונליין.<br><br>אבל אפשר לנסות בטלפון!<br><a href="tel:0524767553" style="color:#ce2b37;font-weight:700;font-size:1.1em;text-decoration:none;">0524767553</a></div></div></div>';
       return;
     }
     if(deliveryMode === 'pickupOnly') {
@@ -2688,7 +2688,7 @@ async function checkOrderSummary() {
   overlay.innerHTML = '<div style="text-align:center;color:#888;font-size:1em;">🔄 טוען סיכום הזמנה...</div>';
   document.body.appendChild(overlay);
   try {
-    const _sumRes = await fetch('https://pizza-nemo-default-rtdb.europe-west1.firebasedatabase.app/orderSummaries/' + token + '.json');
+    const _sumRes = await fetch('https://YOUR_PROJECT_ID-default-rtdb.europe-west1.firebasedatabase.app/orderSummaries/' + token + '.json');
     const _sumText = await _sumRes.text();
     const summary = (_sumRes.ok && _sumText && _sumText !== 'null') ? JSON.parse(_sumText) : null;
     if(!summary) {
@@ -2797,7 +2797,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // נעל דמי משלוח ללקוח (טען מ-Firebase)
     const feeInput = document.getElementById('inp-delivery-fee');
     if(feeInput) { feeInput.readOnly = true; feeInput.style.pointerEvents='none'; feeInput.style.opacity='0.7'; }
-    try { const dfRes = await fetch('https://pizza-nemo-default-rtdb.europe-west1.firebasedatabase.app/settings/deliveryFee.json'); const dfVal = await dfRes.json(); if(dfVal !== null && feeInput) { feeInput.value = dfVal; renderCart(); } } catch(e){}
+    try { const dfRes = await fetch('https://YOUR_PROJECT_ID-default-rtdb.europe-west1.firebasedatabase.app/settings/deliveryFee.json'); const dfVal = await dfRes.json(); if(dfVal !== null && feeInput) { feeInput.value = dfVal; renderCart(); } } catch(e){}
     const payStatusRow = document.getElementById('pay-status-row');
     if(payStatusRow) payStatusRow.style.display = 'none';
     const payMethodRow = document.getElementById('pay-method-row');
@@ -2860,7 +2860,7 @@ function showNoDeliveryPopup() {
   document.body.appendChild(overlay);
 }
 
-const DB_URL = "https://pizza-nemo-default-rtdb.europe-west1.firebasedatabase.app";
+const DB_URL = "https://YOUR_PROJECT_ID-default-rtdb.europe-west1.firebasedatabase.app";
 
 function showSync(msg, type='success') {
   const el = document.getElementById('sync-status');
@@ -6320,7 +6320,7 @@ function printOrderFromHistory(order) {
   const W = 32;
   function line(l, r, w) { const s=w-l.length-r.length; return l+(s>0?' '.repeat(s):' ')+r; }
   const lines = [];
-  lines.push('Pizza Nemo 🍕');
+  lines.push('YOUR_DISPLAY_NAME 🍕');
   lines.push(order.type==='delivery'?'🛵 משלוח':'🏃 איסוף');
   lines.push('הזמנה #' + order.id);
   lines.push(order.date + ' ' + order.time);
@@ -7136,7 +7136,7 @@ function printUnpaidList() {
   const statsFiltered = getStatsFilteredOrders();
   const unpaidOrders = statsFiltered.filter(o => o.paymentStatus !== 'paid');
   const lines = [];
-  lines.push('Pizza Nemo 🍕');
+  lines.push('YOUR_DISPLAY_NAME 🍕');
   lines.push('רשימת לא שולמו');
   lines.push('─'.repeat(32));
   unpaidOrders.forEach(o => {
@@ -7706,7 +7706,7 @@ function selectAllRepCategories() {
 function buildReportText(data) {
   const lines = [];
   const dateStr = data.from === data.to ? data.from : data.from + ' — ' + data.to;
-  lines.push('דוח Pizza Nemo');
+  lines.push('דוח YOUR_DISPLAY_NAME');
   lines.push('תאריך: ' + (dateStr || 'כל הזמן'));
   lines.push('--------------------------------');
   if(document.getElementById('rep-revenue').checked) {
@@ -7758,7 +7758,7 @@ function exportReportPrint() {
 
 function exportReportExcel() {
   const data = getReportData();
-  const rows = [['דוח Pizza Nemo','']];
+  const rows = [['דוח YOUR_DISPLAY_NAME','']];
   const dateStr = data.from === data.to ? data.from : data.from+' — '+data.to;
   rows.push(['תאריך', dateStr||'כל הזמן']);
   if(document.getElementById('rep-revenue').checked) {
@@ -7799,7 +7799,7 @@ function exportReportEmail() {
   const data = getReportData();
   const lines = buildReportText(data);
   const body = encodeURIComponent(lines.join('\n'));
-  const subject = encodeURIComponent('דוח Pizza Nemo - ' + (data.from||''));
+  const subject = encodeURIComponent('דוח YOUR_DISPLAY_NAME - ' + (data.from||''));
   window.location.href = 'mailto:?subject='+subject+'&body='+body;
 }
 

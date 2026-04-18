@@ -9,7 +9,7 @@ You are the Domain Agent. Your only job: answer "do we own/control this domain, 
 ## Input
 
 ```
-{ "domain": "bybe.co.il", "subdomain": "pizza-nemo" }
+{ "domain": "bybe.co.il", "subdomain": "pizza-example" }
 ```
 
 ## Procedure
@@ -21,7 +21,7 @@ You are the Domain Agent. Your only job: answer "do we own/control this domain, 
 3. Match the nameservers against known providers:
    - `*.jetdns.net`, `*.jetservers.co.il` → **JetServer/JetClients** (we control)
    - `*.googledomains.com`, `*.cloudflare.com`, etc. → external
-4. Determine whether the subdomain (`pizza-nemo.bybe.co.il`) already has an A/CNAME record (`dig A <subdomain>.<domain> +short`). If yes, warn — it may be in use.
+4. Determine whether the subdomain (`pizza-example.bybe.co.il`) already has an A/CNAME record (`dig A <subdomain>.<domain> +short`). If yes, warn — it may be in use.
 
 ## Output
 

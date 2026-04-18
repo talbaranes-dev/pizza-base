@@ -65,13 +65,13 @@ The Hosting REST API requires a Google access token. Without gcloud, hand off to
 
 1. Navigate: `https://console.firebase.google.com/project/<project>/hosting/sites/<site-id>`
 2. Click **Add custom domain**.
-3. Type `<subdomain>.<parent-domain>` (e.g. `pizza-jordi.bybe.co.il`).
+3. Type `<subdomain>.<parent-domain>` (e.g. `pizza-example.bybe.co.il`).
 4. Click **Continue**.
 
 Firebase's response depends on whether it's a subdomain or apex:
 - **Subdomain (Quick setup, default)** → Firebase returns a single **CNAME record**:
   `<fqdn> CNAME <site-id>.web.app`
-  Example: `pizza-jordi.bybe.co.il CNAME pizza-jordi-order.web.app`
+  Example: `pizza-example.bybe.co.il CNAME pizza-example-order.web.app`
 - **Apex domain (Advanced)** → Firebase returns a **TXT verification record** first, then A records after TXT propagates.
 
 Capture the required record(s) and return to the orchestrator. Do not write DNS yourself — hand off to dns-agent.
@@ -97,12 +97,12 @@ After A records propagate, Firebase provisions an SSL cert (Let's Encrypt). This
 
 ```json
 {
-  "project": "pizza-nemo",
-  "site": "pizza-nemo-order",
-  "domain": "pizza-nemo.bybe.co.il",
+  "project": "pizza-example",
+  "site": "pizza-example-order",
+  "domain": "pizza-example.bybe.co.il",
   "stage": "verified" | "txt-pending" | "a-pending" | "ssl-pending" | "live",
   "records_required": [
-    { "type": "TXT", "name": "pizza-nemo", "value": "firebase-verify=..." }
+    { "type": "TXT", "name": "pizza-example", "value": "firebase-verify=..." }
   ]
 }
 ```

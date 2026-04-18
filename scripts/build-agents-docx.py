@@ -85,7 +85,9 @@ def main():
         doc,
         "מטרת המערכת: לקבל שם של פיצרייה חדשה, ולהפיק אתר חי בכתובת "
         "https://<שם>.bybe.co.il/ — מקצה לקצה, ללא התערבות ידנית. "
-        "המודל הייחוס הוא pizza-nemo שכבר עלה לאוויר.",
+        "התבנית ב-pizza-base-main משתמשת ב-placeholders טהורים (YOUR_PROJECT_ID, YOUR_DISPLAY_NAME) "
+        "והסוכנים ממלאים אותם. אתרי דמו חיים להשוואה ויזואלית: "
+        "pizzademoorder.bybe.co.il ו-pizzademoadmin.bybe.co.il.",
     )
 
     add_heading(doc, "שרשרת ההפעלה", level=1)
@@ -94,7 +96,7 @@ def main():
         "המשתמש אומר ״הקם פיצרייה <שם>״. Orchestrator מפעיל את הסוכנים בסדר הזה:",
     )
     stages = [
-        "template-agent — שכפול פיצה base לתיקייה חדשה ב-BYBE\\<שם>\\, והחלפת ערכי pizza-nemo בשם החדש.",
+        "template-agent — שכפול פיצה base לתיקייה חדשה ב-BYBE\\<שם>\\, והחלפת הפלייסהולדרים (YOUR_PROJECT_ID, YOUR_DISPLAY_NAME) בערכים החדשים.",
         "firebase-agent — יצירת פרויקט Firebase חדש, שני Hosting sites, Realtime Database, משתמש auth.",
         "template-agent (שלב שני) — הזרקת API key ו-databaseURL החדשים אל הקבצים המשוכפלים.",
         "domain-agent — אימות שאנחנו שולטים ב-bybe.co.il (nameservers ב-JetDNS).",
