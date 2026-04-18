@@ -75,6 +75,8 @@ For the three hours fields, if the user answers `סגור` / `closed` / `0`, sub
 
 **Hours have two roles:** display text (static, placeholder-substituted in the footer) and an auto-schedule source (seeded by orchestrator Stage 5.6 into `settings/businessHours` in RTDB). The admin page's `runAutoSchedule()` reads `businessHours` every minute and fires open/close at the transition moments (open at `hours.open`, close at `hours.close`). The manual "הפעל בוט" / "כבה בוט" button writes `storeOpen` directly — it overrides the current state and persists until the next scheduled transition.
 
+**Customer site has no login screen.** The template's customer HTML is pre-modified: `var _earlyCustomer = true;` and `const IS_CUSTOMER = true;` are both hardcoded, and the `<div id="login-screen">` block + its surrounding `<script>` tags have been deleted. RTDB rules allow `!data.exists()` writes to `orders/$orderId` without auth, so anonymous customers can still create orders. Do not re-introduce a login screen during substitution. Admin site still has its own Firebase Auth login (unchanged).
+
 Behavior rules the scheduler enforces:
 - Past close time for today → force `storeOpen = false`, don't re-fire open for today.
 - Past open time, not yet close, open transition not fired today → set `storeOpen = true`.

@@ -10,13 +10,7 @@
 // if(window.location.hostname === 'YOUR_OLD_DOMAIN') { window.location.replace('https://YOUR_ADMIN_DOMAIN'); }
 // if(window.location.hostname === 'YOUR_OLD_DOMAIN') { window.location.replace('https://YOUR_DOMAIN'); }
 // Early customer detection - before page renders
-var _earlyCustomer = window.location.hostname === 'YOUR_ORDER_DOMAIN' ||
-  window.location.hostname === 'YOUR_ORDER_DOMAIN' ||
-  window.location.hostname === 'YOUR_ORDER_DOMAIN' ||
-  window.location.hostname.includes('pizzademo') ||
-  window.location.hostname.includes('pizza-demo-order') ||
-  new URLSearchParams(window.location.search).has('customer') ||
-  new URLSearchParams(window.location.search).has('order');
+var _earlyCustomer = true;
 if(_earlyCustomer) {
   document.documentElement.classList.add('early-customer');
   setTimeout(() => document.documentElement.classList.add('page-ready'), 2500);
@@ -1074,31 +1068,6 @@ body.customer-mode .item-price{font-size:1em;font-weight:700;color:#008C45;white
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-
-<!-- מסך כניסה -->
-<script>
-if(new URLSearchParams(window.location.search).has('order')) {
-  document.addEventListener('DOMContentLoaded', function() {
-    var ls = document.getElementById('login-screen');
-    if(ls) ls.style.display = 'none';
-  });
-}
-</script>
-<script>if(_earlyCustomer) document.write('<style>#login-screen{display:none!important}</style>');</script>
-<div id="login-screen">
-  <div>
-    <div id="login-screen-logo">🍕</div>
-    <div id="login-screen-title">YOUR_DISPLAY_NAME</div>
-    <div id="login-screen-subtitle">מערכת הזמנות</div>
-    <input type="email" id="login-email" placeholder="אימייל..."
-      onkeydown="if(event.key==='Enter') document.getElementById('login-password').focus()"
-      style="margin-bottom:8px;"/>
-    <input type="password" id="login-password" placeholder="סיסמה..."
-      onkeydown="if(event.key==='Enter') checkLogin()"/>
-    <button id="login-screen-btn" onclick="checkLogin()">כניסה</button>
-    <div id="login-error">אימייל או סיסמה שגויים ❌</div>
-  </div>
-</div>
 
 <script>
 // ─── FIREBASE AUTH ───
@@ -2627,7 +2596,7 @@ async function checkLoginPassword() {
 }
 
 // מצב לקוח
-const IS_CUSTOMER = window.location.hostname === 'YOUR_ORDER_DOMAIN' || window.location.hostname === 'YOUR_ORDER_DOMAIN' || window.location.hostname === 'YOUR_ORDER_DOMAIN' || window.location.hostname.includes('pizzademoorder') || new URLSearchParams(window.location.search).has('order');
+const IS_CUSTOMER = true;
 
 function computeAutoSchedule(schedule) {
   if(!schedule) return {isOpen: null, deliveryMode: null};
