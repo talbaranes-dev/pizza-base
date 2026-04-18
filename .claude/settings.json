@@ -1,0 +1,19 @@
+﻿{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(*)",
+      "Write(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "Task(*)",
+      "TodoWrite(*)",
+      "mcp__*"
+    ]
+  }
+}
