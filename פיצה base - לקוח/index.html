@@ -8713,6 +8713,10 @@ if(IS_CUSTOMER) {
   footer.innerHTML = `
     <div style="font-size:1.1em;font-weight:700;margin-bottom:8px;">YOUR_DISPLAY_NAME</div>
     <div style="font-size:0.85em;color:#ccc;margin-bottom:4px;">YOUR_ADDRESS, YOUR_CITY | טלפון: YOUR_PHONE</div>
+    <div id="store-status-badge" style="display:inline-block;margin:6px 0 10px;padding:6px 14px;border-radius:20px;font-weight:700;font-size:0.9em;background:rgba(255,255,255,0.1);color:#fff;transition:background 0.3s;">
+      <span id="store-status-dot">⚪</span>
+      <span id="store-status-text">טוען סטטוס...</span>
+    </div>
     <div style="font-size:0.85em;color:#ffd966;margin-top:8px;margin-bottom:4px;">
       <div style="font-weight:700;margin-bottom:2px;">שעות פעילות:</div>
       <div>ראשון - חמישי: YOUR_HOURS_WEEKDAY</div>
@@ -8731,6 +8735,26 @@ if(IS_CUSTOMER) {
     <div style="font-size:0.75em;color:#888;margin-top:12px;">&copy; 2024 YOUR_DISPLAY_NAME - כל הזכויות שמורות</div>
   `;
   document.body.appendChild(footer);
+
+  // Dynamic store-status badge: reflects settings/storeOpen in real time
+  (function pollStoreStatusBadge() {
+    async function update() {
+      try {
+        const res = await fetch(DB_URL + '/settings/storeOpen.json');
+        const isOpen = !!(await res.json());
+        const dot = document.getElementById('store-status-dot');
+        const text = document.getElementById('store-status-text');
+        const badge = document.getElementById('store-status-badge');
+        if (dot && text && badge) {
+          dot.textContent = isOpen ? '🟢' : '🔴';
+          text.textContent = isOpen ? 'פתוח עכשיו' : 'סגור כרגע';
+          badge.style.background = isOpen ? 'rgba(30,122,58,0.28)' : 'rgba(200,60,60,0.28)';
+        }
+      } catch(e) {}
+    }
+    update();
+    setInterval(update, 30000);
+  })();
 
   // ===== ADD ACCESSIBILITY STATEMENT LINK TO ACC WIDGET =====
   const origBuild = window.buildPanel;
