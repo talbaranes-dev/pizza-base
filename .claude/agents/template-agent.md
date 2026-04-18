@@ -14,7 +14,6 @@ You are the Template Agent. You turn the base template into a ready-to-deploy so
   "display_name": "פיצה גלוטן",
   "source_root": "C:\\Users\\jorde\\OneDrive\\שולחן העבודה\\BYBE\\pizza-base-main",
   "target_root": "C:\\Users\\jorde\\OneDrive\\שולחן העבודה\\BYBE\\pizza-gluten",
-  "reference_name": "pizza-base",
   "business": {
     "manager_password_raw": "secret123",
     "app_password_raw": "",
@@ -29,8 +28,9 @@ You are the Template Agent. You turn the base template into a ready-to-deploy so
 - `display_name`: Hebrew human-readable name — used in page titles and UI copy.
 - `source_root`: where the `פיצה base - לקוח` and `פיצה base- מנהל` folders live. Default is `BYBE\pizza-base-main` (the pristine template clone).
 - `target_root`: new directory under `BYBE\` that will hold the two cloned folders.
-- `reference_name`: the placeholder token currently in the template (project ID, site IDs, hostnames). Default: `pizza-base`. If cloning from a filled-in reference like `pizza nemo`, pass `pizza-nemo`.
 - `business`: optional object with business data collected by orchestrator Stage 0. All fields optional — skip substitution for any that are empty/missing.
+
+The template uses pure placeholders — `YOUR_PROJECT_ID` for the Firebase project ID/site IDs/hostnames and `YOUR_DISPLAY_NAME` for the Hebrew shop name. The template-agent replaces them during cloning.
 
 If `target_root` already exists, stop and return `status: "exists"` — do not overwrite.
 
@@ -38,7 +38,7 @@ If `target_root` already exists, stop and return `status: "exists"` — do not o
 
 ### 1. Validate
 
-- `new_name` matches the regex above, and is not equal to `reference_name`.
+- `new_name` matches the regex above.
 - Source folders exist: `<source_root>\פיצה base - לקוח` and `<source_root>\פיצה base- מנהל`.
 - Target root is a fresh path.
 
@@ -58,16 +58,17 @@ Do these substitutions **inside the target tree only** (never edit the source):
 
 | Find (literal) | Replace with |
 |---|---|
-| `<reference_name>-order` | `<new_name>-order` |
-| `<reference_name>-admin` | `<new_name>-admin` |
-| `<reference_name>.bybe.co.il` | `<new_name>.bybe.co.il` |
-| `<reference_name>` (remaining) | `<new_name>` |
+| `YOUR_PROJECT_ID-order` | `<new_name>-order` |
+| `YOUR_PROJECT_ID-admin` | `<new_name>-admin` |
+| `YOUR_PROJECT_ID.bybe.co.il` | `<new_name>.bybe.co.il` |
+| `YOUR_PROJECT_ID` (remaining) | `<new_name>` |
+| `YOUR_DISPLAY_NAME` | `<display_name>` |
 | `YOUR_ORDER_DOMAIN` | `<new_name>.bybe.co.il` |
 | `YOUR_ADMIN_DOMAIN` | `<new_name>-admin.web.app` |
 
 Target file globs: `**/*.html`, `**/*.json`, `**/*.firebaserc`, `**/firebase.json`, `**/*.md`.
 
-The **order matters** — replace the qualified forms (`-order`, `-admin`, `.bybe.co.il`) before the bare name, so the bare-name pass doesn't corrupt earlier substitutions.
+The **order matters** — replace the qualified forms (`-order`, `-admin`, `.bybe.co.il`) before the bare `YOUR_PROJECT_ID`, so the bare-name pass doesn't corrupt earlier substitutions.
 
 ### 3b. Business data substitutions
 
@@ -93,29 +94,23 @@ Apply to all HTML files in the target tree (`**/*.html`). The exact string match
 
 ### 4. Firebase API key + DB URL placeholders
 
-The template currently hardcodes the reference project's API key AND a DB_URL with embedded region. Replace both with placeholders so firebase-agent can fill them after project creation:
+After step 3, the template still contains a baked-in API key from a historical deploy. Reset it, and reset the DB URL to a placeholder so firebase-agent fills the real value after project creation:
 
 ```
-FIREBASE_API_KEY = "AIza..." (old)  →  "YOUR_FIREBASE_API_KEY"
-DB_URL = "https://<ref>-default-rtdb.europe-west1.firebasedatabase.app" (old)  →  "YOUR_DATABASE_URL"
+FIREBASE_API_KEY = "AIza..."  →  "YOUR_FIREBASE_API_KEY"
+DB_URL = "https://<new_name>-default-rtdb.<region>.firebasedatabase.app"  →  "YOUR_DATABASE_URL"
 ```
 
-Also scan for direct `fetch('https://<ref>-default-rtdb.<region>.firebasedatabase.app/...')` calls — there are usually several. Replace the hostname portion with `YOUR_DATABASE_URL`.
+Also scan for direct `fetch('https://<new_name>-default-rtdb.<region>.firebasedatabase.app/...')` calls — there are usually several. Replace the hostname portion with `YOUR_DATABASE_URL`.
 
 ### 5. Region detection (critical)
 
-Before handing off to firebase-agent, **extract the region from the template's DB_URL** and attach it to the output:
+Before handing off to firebase-agent, **extract the region from the template's DB_URL** (read before step 4 resets it) and attach it to the output:
 - `*.firebaseio.com` → region = `us-central1`
 - `*.europe-west1.firebasedatabase.app` → region = `europe-west1`
 - `*.asia-southeast1.firebasedatabase.app` → region = `asia-southeast1`
 
-firebase-agent needs this to pick the right option in the "Create Database" wizard. Mismatched region = silently broken site (template's DB_URL won't resolve).
-
-Do this **only** on the cloned copy. The firebase-agent will run a second pass to insert the real values once the new project exists.
-
-### 5. Display name
-
-Replace the reference project's Hebrew display name (if any) with `display_name`. If no Hebrew display name is baked in yet, skip this step — the user will fill it via the admin panel.
+firebase-agent needs this to pick the right option in the "Create Database" wizard. Mismatched region = silently broken site (the DB URL firebase-agent inserts must match).
 
 ## Output
 

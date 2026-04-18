@@ -1,12 +1,12 @@
 {
   "projects": {
-    "default": "pizza-nemo"
+    "default": "YOUR_PROJECT_ID"
   },
   "targets": {
-    "pizza-nemo": {
+    "YOUR_PROJECT_ID": {
       "hosting": {
         "order": [
-          "pizza-nemo-order"
+          "YOUR_PROJECT_ID-order"
         ]
       }
     }

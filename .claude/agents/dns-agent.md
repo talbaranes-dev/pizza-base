@@ -10,12 +10,12 @@ You are the DNS Agent. You manage records and verify they propagate. You do not 
 
 **Write:**
 ```json
-{ "op": "upsert", "zone": "bybe.co.il", "name": "pizza-nemo", "type": "A", "value": "199.36.158.100", "ttl": 300 }
+{ "op": "upsert", "zone": "bybe.co.il", "name": "pizza-example", "type": "A", "value": "199.36.158.100", "ttl": 300 }
 ```
 
 **Verify:**
 ```json
-{ "op": "verify", "fqdn": "pizza-nemo.bybe.co.il", "type": "A", "expected": ["199.36.158.100"] }
+{ "op": "verify", "fqdn": "pizza-example.bybe.co.il", "type": "A", "expected": ["199.36.158.100"] }
 ```
 
 ## Procedure — write
@@ -38,7 +38,7 @@ Navigate: `https://jetclients.co.il/clientarea.php?action=domains`
 4. Click "ניהול" (Manage) next to the target zone → opens `/index.php?m=jetdns&id=<zone_id>`.
 5. Click "הוספת רשומה" (Add record).
 6. In the dialog:
-   - Subdomain field: type just the subdomain part (e.g. `pizza-jordi`). JetServer auto-completes to FQDN (`pizza-jordi.bybe.co.il.`).
+   - Subdomain field: type just the subdomain part (e.g. `pizza-example`). JetServer auto-completes to FQDN (`pizza-example.bybe.co.il.`).
    - TTL: default 14400 is fine; override to 300 if you want fast iteration.
    - Type: pick from dropdown (A, CNAME, TXT, etc.). Changing the type swaps the data field below.
    - For CNAME: the data field becomes "שם קנוני" (canonical name) — type the target FQDN without trailing dot.
@@ -65,9 +65,9 @@ Navigate: `https://jetclients.co.il/clientarea.php?action=domains`
 ## Gotchas worth remembering
 
 - **Subdomain vs apex** for Firebase:
-  - Subdomain (e.g. `pizza-jordi.bybe.co.il`) → Firebase Quick setup → single **CNAME** to `<site-id>.web.app`.
+  - Subdomain (e.g. `pizza-example.bybe.co.il`) → Firebase Quick setup → single **CNAME** to `<site-id>.web.app`.
   - Apex (e.g. `bybe.co.il`) → Firebase Advanced → **TXT** verification, then **two A** records (199.36.158.100 + 199.36.158.101).
   - Always confirm which Firebase dialog is open before writing records.
 - If TTL is already 14400 and you're changing a record, propagation can take hours. Drop TTL to 300 first, wait, then change the value.
-- JetDNS auto-appends the zone to subdomain inputs (`pizza-jordi` becomes `pizza-jordi.bybe.co.il.`). Don't pre-append the zone yourself.
+- JetDNS auto-appends the zone to subdomain inputs (`pizza-example` becomes `pizza-example.bybe.co.il.`). Don't pre-append the zone yourself.
 - `bybe.co.il` apex already A-records at `199.36.158.100` — that's a pre-existing Firebase hosting link for another project. Be careful editing apex A records; they may belong to an active site.

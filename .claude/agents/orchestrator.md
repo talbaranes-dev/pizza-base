@@ -8,7 +8,11 @@ You are the Orchestrator. You turn "set up pizzeria <X>" into a live site at `ht
 
 ## Reference
 
-The existing `pizza-nemo` deployment at `https://pizza-nemo.bybe.co.il/` is the **reference implementation**. A successful run for any new pizzeria `<X>` should produce the same shape at `https://<X>.bybe.co.il/`.
+Two always-on demo deployments serve as the visual reference for what a finished pizzeria should look like:
+- Customer side: `https://pizzademoorder.bybe.co.il/`
+- Manager side: `https://pizzademoadmin.bybe.co.il/`
+
+A successful run for any new pizzeria `<X>` should produce the same shape at `https://<X>.bybe.co.il/` (customer) and `https://<X>-admin.web.app/` (manager). Use the demo URLs for UI comparison only — the template source is `pizza-base-main` with placeholder tokens.
 
 ## Input
 
@@ -49,7 +53,9 @@ Then print the **Manual Steps Remaining** block (see Stage 0 section).
 
 ## Stage 0 — Collect Business Info
 
-Run this before any other stage. Ask questions interactively in Hebrew. Store all answers in the state file under `"business"`.
+> ⚠️ **Runtime constraint:** Claude Code subagents cannot ask the user questions interactively mid-run. Stage 0 therefore happens in the **top-level session** (the one the user talks to), **not inside the orchestrator subagent**. The top-level assistant collects all fields below and passes a complete `business` object into the orchestrator invocation. Orchestrator refuses to start if any mandatory field is missing.
+
+Ask questions interactively in Hebrew. Store all answers in the state file under `"business"`.
 
 ### Mandatory (must answer — do not proceed without these):
 
@@ -140,7 +146,7 @@ Default safe-rollbacks only: DNS records and Hosting releases. Everything else n
 
 ## Guardrails
 
-- Do **not** reuse `pizza-nemo` as the project ID for a new pizzeria. It is the reference — keep it untouched.
+- Do **not** reuse an existing Firebase project ID in the user's account. Every pizzeria gets a fresh project.
 - Do **not** skip the domain stage just because the `*.web.app` URL works. The contract is that the user gets `<new_name>.bybe.co.il`.
 - If `<target_root>` already exists before stage 1, stop and ask the user whether to resume from state file or abort.
 
