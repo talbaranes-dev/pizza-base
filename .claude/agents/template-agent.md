@@ -73,7 +73,13 @@ Do these substitutions **inside the target tree only** (never edit the source):
 
 For the three hours fields, if the user answers `סגור` / `closed` / `0`, substitute the literal string `סגור` (not a time range).
 
-**Hours are display-only.** They render as static text at the bottom of both the customer and admin pages and have **no effect on whether the customer site shows open or closed**. The open/closed state is controlled exclusively by `settings/storeOpen` in RTDB, which the admin's "הפעל בוט" / "כבה בוט" button writes. There is no longer a `YOUR_AUTO_OFF_HOUR` placeholder or a time-based bot shutdown — the old `setInterval` that force-closed the bot at a fixed hour was removed (contradicted manual-only control). If the user wants time-based auto-open/close in the future, they configure it via the admin's WhatsApp settings panel (which writes `settings/autoSchedule`), and it only fires while the admin page is open.
+**Hours have two roles:** display text (static, placeholder-substituted in the footer) and an auto-schedule source (seeded by orchestrator Stage 5.6 into `settings/businessHours` in RTDB). The admin page's `runAutoSchedule()` reads `businessHours` every minute and fires open/close at the transition moments (open at `hours.open`, close at `hours.close`). The manual "הפעל בוט" / "כבה בוט" button writes `storeOpen` directly — it overrides the current state and persists until the next scheduled transition.
+
+Behavior rules the scheduler enforces:
+- Past close time for today → force `storeOpen = false`, don't re-fire open for today.
+- Past open time, not yet close, open transition not fired today → set `storeOpen = true`.
+- Catch-up: if admin page opens at 15:00 on a day when `hours.open = 13:00`, the scheduler immediately fires open. Manager can then close manually and it sticks until 23:00.
+- No `YOUR_AUTO_OFF_HOUR` placeholder exists — the old `setInterval` that force-closed at a fixed hour was replaced by this richer logic.
 
 **Dynamic status badge.** Both templates include a real-time status badge above the hours text (id `store-status-badge`) with a JS poller that reads `settings/storeOpen` every 30 seconds and updates the dot + text (`🟢 פתוח עכשיו` / `🔴 סגור כרגע`) + background color. This gives customers an unambiguous "is the store currently taking orders" signal independent of the static hours. Do not remove or alter the badge during substitution — it has no placeholders that need filling.
 

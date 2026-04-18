@@ -9651,38 +9651,50 @@ function computeAutoSchedule(schedule) {
   return {isOpen: false, deliveryMode: null};
 }
 
+// Auto-schedule: syncs storeOpen to business hours at transitions.
+// Manual button changes (startBot/stopBot) take effect immediately and persist
+// until the NEXT scheduled transition — the scheduler only fires at exact
+// open/close times, not continuously, so mid-day manual override is respected.
+// Requires admin page to be open at transition time; catches up on first load
+// if past open time and not already fired today.
 async function runAutoSchedule() {
   if(IS_CUSTOMER) return;
   try {
-    const schedule = await fbGet('settings/autoSchedule');
-    if(!schedule) return;
-    const ao = schedule.autoOn || {}, aof = schedule.autoOff || {};
+    const biz = await fbGet('settings/businessHours');
+    if(!biz) return;  // no hours configured → no auto-scheduling
     const now = new Date();
     const today = now.toISOString().slice(0,10);
-    const day = now.getDay();
+    const day = now.getDay();                          // 0=Sun, 5=Fri, 6=Sat
     const timeStr = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+
+    // Pick today's hours based on day-of-week
+    let hours;
+    if(day === 5)       hours = biz.friday;
+    else if(day === 6)  hours = biz.saturday;
+    else                hours = biz.weekday;
+
+    if(!hours || !hours.open || !hours.close) return;  // closed-day or missing → no transitions
+
     const lastFired = await fbGet('settings/scheduleLastFired') || {};
 
-    // הדלקה אוטומטית — רק אם לא כבר פעל היום באותה שעה
-    if(ao.enabled && Array.isArray(ao.days) && ao.days.includes(day) && ao.time && timeStr >= ao.time) {
-      if(!(lastFired.onDate === today && lastFired.onTime === ao.time)) {
-        await fbSet('settings/storeOpen', true);
-        await fbSet('settings/deliveryMode', ao.serviceType === 'pickupOnly' ? 'pickupOnly' : null);
-        await fbSet('settings/scheduleLastFired', {...lastFired, onDate: today, onTime: ao.time});
-        if(!botActive) { startBot(); updateBotBtnIcon(ao.serviceType); }
-        showToast('🟢 הבוט הופעל אוטומטית');
-        return;
-      }
+    // If close already fired today, we're done for today — no re-open attempts.
+    if(lastFired.closeDate === today) return;
+
+    // Close transition has higher priority — if past close time, force closed now.
+    if(timeStr >= hours.close) {
+      await fbSet('settings/storeOpen', false);
+      await fbSet('settings/scheduleLastFired', {...lastFired, closeDate: today, closeTime: hours.close});
+      if(botActive) { stopBot(); showToast('🔴 הבוט נסגר אוטומטית — ' + hours.close); }
+      return;
     }
 
-    // כיבוי אוטומטי — רק אם לא כבר פעל היום באותה שעה
-    if(aof.enabled && Array.isArray(aof.days) && aof.days.includes(day) && aof.time && timeStr >= aof.time) {
-      if(!(lastFired.offDate === today && lastFired.offTime === aof.time)) {
-        await fbSet('settings/storeOpen', false);
-        await fbSet('settings/scheduleLastFired', {...lastFired, offDate: today, offTime: aof.time});
-        if(botActive) { stopBot(); showToast('🔴 הבוט כובה אוטומטית'); }
-        return;
-      }
+    // Open transition — fire if past open time and not already fired today.
+    if(timeStr >= hours.open && lastFired.openDate !== today) {
+      await fbSet('settings/storeOpen', true);
+      await fbSet('settings/scheduleLastFired', {...lastFired, openDate: today, openTime: hours.open});
+      if(!botActive) { startBot(); updateBotBtnIcon('both'); }
+      showToast('🟢 הבוט נפתח אוטומטית — ' + hours.open);
+      return;
     }
   } catch(e) {}
 }
