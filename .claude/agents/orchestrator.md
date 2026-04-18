@@ -81,9 +81,10 @@ Ask questions interactively in Hebrew. Store all answers in the state file under
 | `whatsapp_bot_url` | "כתובת שרת בוט WhatsApp? (Enter לדלג)" | `YOUR_WHATSAPP_BOT_URL` | leave placeholder |
 | `google_places_key` | "Google Places API key להשלמת כתובות? (Enter לדלג)" | `YOUR_GOOGLE_PLACES_API_KEY` | leave placeholder |
 | `hours_weekday` | "שעות פעילות ימים א'-ה'? (דוגמה: `13:00-23:00`, Enter = ברירת מחדל)" | `YOUR_HOURS_WEEKDAY` | `13:00 - 23:00` |
-| `hours_weekend` | "שעות פעילות יום ו' + שבת? (דוגמה: `19:00-23:00`, Enter = ברירת מחדל)" | `YOUR_HOURS_WEEKEND` | `19:00 - 23:00` |
+| `hours_friday` | "שעות פעילות יום שישי? (דוגמה: `13:00-15:00`, כתוב `סגור` אם סגורים, Enter = ברירת מחדל)" | `YOUR_HOURS_FRIDAY` | `13:00 - 15:00` |
+| `hours_saturday` | "שעות פעילות שבת / מוצ\"ש? (דוגמה: `19:00-23:00`, כתוב `סגור` אם סגורים, Enter = ברירת מחדל)" | `YOUR_HOURS_SATURDAY` | `19:00 - 23:00` |
 
-**Hours normalization:** After collecting, normalize whatever format the user enters (e.g. `13:00-23:00`, `13-23`, `13:00 עד 23:00`) to the display form `HH:MM - HH:MM`. If parsing fails, show the raw close time as-is and ask the user to confirm. Derive `auto_off_hour` (integer) from the weekday close time — template-agent uses it for `YOUR_AUTO_OFF_HOUR`.
+**Hours normalization:** For each of the three hours fields, accept free formats (`13:00-23:00`, `13-23`, `13:00 עד 23:00`) and normalize to `HH:MM - HH:MM`. Also accept the literal `סגור` / `closed` / `0` — pass through as `סגור`. If parsing fails, ask the user to confirm before continuing. Derive `auto_off_hour` (integer) from the weekday close time (never from Friday/Saturday, since those are often early-close or closed) — template-agent uses it for `YOUR_AUTO_OFF_HOUR`.
 
 ### Collect for manual steps (no HTML placeholder — just store for the end summary):
 

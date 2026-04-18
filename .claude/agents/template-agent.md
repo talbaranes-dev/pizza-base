@@ -65,8 +65,11 @@ Do these substitutions **inside the target tree only** (never edit the source):
 | `YOUR_ORDER_DOMAIN` | `<new_name>.bybe.co.il` | — |
 | `YOUR_ADMIN_DOMAIN` | `<new_name>-admin.bybe.co.il` | — |
 | `YOUR_HOURS_WEEKDAY` | `<business.hours_weekday>` | `13:00 - 23:00` |
-| `YOUR_HOURS_WEEKEND` | `<business.hours_weekend>` | `19:00 - 23:00` |
+| `YOUR_HOURS_FRIDAY` | `<business.hours_friday>` | `13:00 - 15:00` |
+| `YOUR_HOURS_SATURDAY` | `<business.hours_saturday>` | `19:00 - 23:00` |
 | `YOUR_AUTO_OFF_HOUR` | integer hour derived from `business.hours_weekday` close time, or `<business.auto_off_hour>` if explicitly set | `23` |
+
+For the three hours fields, if the user answers `סגור` / `closed` / `0`, substitute the literal string `סגור` (not a time range).
 
 Target file globs: `**/*.html`, `**/*.json`, `**/*.firebaserc`, `**/firebase.json`, `**/*.md`.
 
