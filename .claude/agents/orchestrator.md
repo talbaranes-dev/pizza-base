@@ -66,12 +66,16 @@ Ask questions interactively in Hebrew. Store all answers in the state file under
 
 ### Optional (press Enter to skip — will stay as placeholder/default):
 
-| Field | Question | Fills |
-|-------|----------|-------|
-| `app_password` | "סיסמת כניסה לאפליקציה הלקוח? (Enter = ללא סיסמה)" | `APP_PASSWORD_HASH` |
-| `whatsapp_phone` | "מספר WhatsApp לקבלת הזמנות? (Enter לדלג)" | `YOUR_WHATSAPP_PHONE` |
-| `whatsapp_bot_url` | "כתובת שרת בוט WhatsApp? (Enter לדלג)" | `YOUR_WHATSAPP_BOT_URL` |
-| `google_places_key` | "Google Places API key להשלמת כתובות? (Enter לדלג)" | `YOUR_GOOGLE_PLACES_API_KEY` |
+| Field | Question | Fills | Default if skipped |
+|-------|----------|-------|-------|
+| `app_password` | "סיסמת כניסה לאפליקציה הלקוח? (Enter = ללא סיסמה)" | `APP_PASSWORD_HASH` | empty string |
+| `whatsapp_phone` | "מספר WhatsApp לקבלת הזמנות? (Enter לדלג)" | `YOUR_WHATSAPP_PHONE` | leave placeholder |
+| `whatsapp_bot_url` | "כתובת שרת בוט WhatsApp? (Enter לדלג)" | `YOUR_WHATSAPP_BOT_URL` | leave placeholder |
+| `google_places_key` | "Google Places API key להשלמת כתובות? (Enter לדלג)" | `YOUR_GOOGLE_PLACES_API_KEY` | leave placeholder |
+| `hours_weekday` | "שעות פעילות ימים א'-ה'? (דוגמה: `13:00-23:00`, Enter = ברירת מחדל)" | `YOUR_HOURS_WEEKDAY` | `13:00 - 23:00` |
+| `hours_weekend` | "שעות פעילות יום ו' + שבת? (דוגמה: `19:00-23:00`, Enter = ברירת מחדל)" | `YOUR_HOURS_WEEKEND` | `19:00 - 23:00` |
+
+**Hours normalization:** After collecting, normalize whatever format the user enters (e.g. `13:00-23:00`, `13-23`, `13:00 עד 23:00`) to the display form `HH:MM - HH:MM`. If parsing fails, show the raw close time as-is and ask the user to confirm. Derive `auto_off_hour` (integer) from the weekday close time — template-agent uses it for `YOUR_AUTO_OFF_HOUR`.
 
 ### Collect for manual steps (no HTML placeholder — just store for the end summary):
 
