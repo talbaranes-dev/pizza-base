@@ -122,6 +122,7 @@ If response contains `"localId"` → success. If `EMAIL_EXISTS` → user already
 2. Source Code → Git Provider → pick `adminbybe/pizza-whatsapp-bot` (use the credentials dropdown to switch to `adminbybe` if the wrong account is shown).
 3. Fill:
    - **Name**: `<new_name>` (must match Firebase project ID — this becomes the `*.onrender.com` hostname)
+   - **Project** (Optional field on form, but **not optional for us**): select **`BYBE Pizza Bots`** → environment **`Production`**. If you leave this blank, the service ends up as "Ungrouped" and you'll have to Move it manually later (click `...` next to the service in the Dashboard → Move → BYBE Pizza Bots → Production). The project was renamed from Render's default "My project" to "BYBE Pizza Bots" on 2026-04-19; don't recreate it.
    - **Language**: Node (auto-detected)
    - **Branch**: `main`
    - **Region**: Frankfurt (EU Central — best Israel latency)
