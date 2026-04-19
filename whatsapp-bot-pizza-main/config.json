@@ -1,0 +1,13 @@
+{
+  "firebaseDb": "",
+  "rules": [
+    {
+      "keywords": ["היי אני רוצה להזמין"],
+      "response": "בשמחה ❤️ הינה קישור להזמנה אונליין\nhttps://example.com/",
+      "matchType": "exact"
+    }
+  ],
+  "defaultResponse": "",
+  "ignoreGroups": true,
+  "_comment": "This file is a LOCAL-DEV fallback. In production (Render), set env vars instead: FIREBASE_DB, ORDER_URL, BOT_KEYWORDS (comma-separated), BOT_RESPONSE_PREFIX, DEFAULT_RESPONSE, IGNORE_GROUPS. Env vars always take precedence."
+}
