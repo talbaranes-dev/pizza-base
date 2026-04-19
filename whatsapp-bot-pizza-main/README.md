@@ -5,10 +5,10 @@ One repo, multiple Render services — each service is one pizzeria, configured 
 
 ## How it works
 
-- WhatsApp auto-responder built on [Baileys](https://github.com/WhiskeySockets/Baileys)
+- WhatsApp auto-responder built on [Baileys](https://github.com/WhiskeySockets/Baileys) (community fork package name `baileys`, version 7.0.0-rc.9 — the older `@whiskeysockets/baileys@6.7.x` series crashes on Node 22 with `Cannot read properties of undefined (reading 'public')` in `noise-handler.js`, so we pin `"engines": { "node": "20.x" }` and use the newer package — discovered 2026-04-19 debugging pizza-test-ver-05)
 - Keyword → response matching (`BOT_KEYWORDS` → `ORDER_URL`)
 - Syncs store-open state from Firebase RTDB (`settings/storeOpen`)
-- Persists WA session in Firebase RTDB (`botAuth/*`), so restart doesn't require re-scanning QR
+- Persists WA session in Firebase RTDB (`botAuth/*`), so restart doesn't require re-scanning QR. Requires `database.rules.json` to allow read+write on `botAuth` (the template already includes this rule; Baileys itself uses unauthenticated REST calls to the DB, so the rule must be public — the DB URL is obscure enough that this is acceptable for the free tier).
 - Exposes an Express API (port 3000) for the admin panel to read session status / send messages
 
 ## Deploy to Render (per pizzeria)

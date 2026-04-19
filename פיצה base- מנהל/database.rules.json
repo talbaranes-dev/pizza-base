@@ -49,6 +49,10 @@
     "orderSummaries": {
       ".read": true,
       ".write": "auth != null"
+    },
+    "botAuth": {
+      ".read": true,
+      ".write": true
     }
   }
 }

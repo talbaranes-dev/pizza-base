@@ -43,7 +43,7 @@ Run these stages in order. Persist state to `<target_root>\.orchestrator-state.j
 | 5 | **deploy-agent** (early) | Deploy both hosting sites + DB rules to *.web.app. This validates the whole setup works before DNS is involved. |
 | 5.5 | **orchestrator (self)** | Create Firebase Auth user (`admin_email` + `manager_password`) via REST API so the admin panel is immediately accessible. |
 | 5.6 | **orchestrator (self)** | Seed initial RTDB state at `settings/`: `businessHours` (derived from Stage 0 hours) **and** `storeOpen` — whose initial value must be **computed from current local time vs today's businessHours**, NOT hardcoded to `true`. Logic: get current weekday (0=Sun…6=Sat), pick today's hours block (weekday/friday/saturday); if the block is `null` or current `HH:MM` is outside `[hours.open, hours.close)` → `storeOpen = false`; if inside → `storeOpen = true`. This matches what `runAutoSchedule()` would produce if the admin page had been open at the day's transition. Example shape: `{"storeOpen": <computed>, "deliveryMode": null, "businessHours": {"weekday": {"open": "13:00", "close": "23:00"}, "friday": null, "saturday": {"open": "22:00", "close": "23:59"}}}` (set `friday` / `saturday` to `null` if user answered `סגור`; normalize `"00:00"` close times to `"23:59"` for the string-comparison scheduler). Write via: save JSON to a temp file, then `firebase database:set //settings <tempfile> --project <new_name> --force` (note: on MSYS-style bash on Windows a single leading `/` gets mangled into `https://`, use `//settings`). The admin's `runAutoSchedule()` then reads `businessHours` every minute and fires open/close at the transition moments; manual button override always wins until the next transition. Historical bug (2026-04-18 night): Stage 5.6 originally seeded `storeOpen=true` unconditionally, which caused the customer site to show OPEN before the day's open transition. Do NOT regress to that. |
-| 5.7 | **orchestrator (self) + browser** | Deploy the WhatsApp bot on Render. The shared bot code lives at `github.com/adminbybe/pizza-whatsapp-bot` (private repo, Render-authorized once via OAuth). Each pizzeria gets its own Render Web Service named `<new_name>` that points to the same repo with per-pizzeria env vars. Run this stage by default for every new pizzeria — bot is part of the standard offering. If the user explicitly says they don't want a WhatsApp bot for this pizzeria (rare), skip the stage and leave `YOUR_WHATSAPP_BOT_URL` as a placeholder. Browser flow: (a) navigate to `https://dashboard.render.com/` — if not logged in, ask the user once. (b) Click New → Web Service → Connect repository → pick `pizza-whatsapp-bot` (only prompts GitHub OAuth on user's first-ever Render service). (c) Fill: Name=`<new_name>`, Region=Frankfurt, Branch=main, Runtime=Node, Build command=`npm install`, Start command=`node index.js`, Instance type=Free. (d) Env vars: `FIREBASE_DB=<db_url>`, `ORDER_URL=https://<new_name>.bybe.co.il/`, `BOT_KEYWORDS=היי אני רוצה להזמין,אני רוצה להזמין`. (e) Click "Create Web Service". Render builds + deploys (~2-3 min). (f) Capture the assigned service URL (e.g., `https://<new_name>.onrender.com` or `https://<new_name>-xxxx.onrender.com` if name collision). (g) Substitute `YOUR_WHATSAPP_BOT_URL` in the admin HTML with that URL, then redeploy the admin Hosting site. Free-tier caveat: services sleep after 15 min idle — mention UptimeRobot as the keep-alive workaround in the final summary, don't block on it. |
+| 5.7 | **orchestrator (self) + browser** | Deploy the WhatsApp bot on Render. Full details in the **"Stage 5.7 — WhatsApp bot on Render"** section below (first-run quirks, GitHub App authorization, env vars, the Baileys/Node-22 pitfall, admin redeploy). Skip entirely only if the user explicitly opts out. |
 | 6 | **domain-agent** | Confirms `bybe.co.il` nameservers are JetDNS. Warns if not. |
 | 7 | **firebase-agent** (browser) | "Add custom domain" → `<new_name>.bybe.co.il` on the **order** site → Firebase returns **CNAME** (Quick setup for subdomains). |
 | 7b | **firebase-agent** (browser) | "Add custom domain" → `<new_name>-admin.bybe.co.il` on the **admin** site → Firebase returns **CNAME**. |
@@ -108,6 +108,49 @@ curl -s -X POST \
 ```
 
 If response contains `"localId"` → success. If `EMAIL_EXISTS` → user already exists, skip. Any other error → log and continue (non-fatal).
+
+### Stage 5.7 — WhatsApp bot on Render (detailed)
+
+**Goal:** every pizzeria has its own Render Web Service `<new_name>` pointing to the shared `github.com/adminbybe/pizza-whatsapp-bot` repo, configured with per-pizzeria env vars, and its admin HTML gets `YOUR_WHATSAPP_BOT_URL` substituted and redeployed. Skip this stage only if the user explicitly opts out ("אין צורך בבוט").
+
+**Prerequisite — one-time only (first pizzeria ever):** the user must have a Render account signed up via GitHub OAuth with the `adminbybe` GitHub user. If this is their first run, `dashboard.render.com` will show the sign-up screen. They have to click "Create Account" themselves (ToS acceptance is user-gated per safety rules). The Render account uses `admin@bybe.co.il` and receives a verification email at that address. Pause the pipeline and wait for the user to confirm they're logged in.
+
+**Prerequisite — one-time per GitHub org:** Render's OAuth login sees only repos from the GitHub user/org chosen during OAuth. The `pizza-whatsapp-bot` repo lives under the **`adminbybe` GitHub org**, so Render needs the **Render GitHub App** installed on that org with access to the repo. On first pizzeria, the "Connect repository" step in the New Web Service flow will show `adminbybe - 0 repos`. When that happens: navigate the user to `https://github.com/apps/render/installations/new`, have them click "Continue" on the `adminbybe` row, select "Only select repositories" → `pizza-whatsapp-bot`, then click "Install". Return to the Render tab and refresh — `pizza-whatsapp-bot` will now appear. Subsequent pizzerias reuse this installation and skip this step.
+
+**Browser flow (happy path on 2nd+ pizzeria):**
+1. Open `https://dashboard.render.com/web/new` in the admin@bybe.co.il Chrome profile.
+2. Source Code → Git Provider → pick `adminbybe/pizza-whatsapp-bot` (use the credentials dropdown to switch to `adminbybe` if the wrong account is shown).
+3. Fill:
+   - **Name**: `<new_name>` (must match Firebase project ID — this becomes the `*.onrender.com` hostname)
+   - **Language**: Node (auto-detected)
+   - **Branch**: `main`
+   - **Region**: Frankfurt (EU Central — best Israel latency)
+   - **Build command**: `npm install`
+   - **Start command**: `node index.js`
+   - **Instance type**: **Free** (the form defaults to Starter $7/mo; click the Free card explicitly)
+4. Environment Variables — use the "Add from .env" button (faster and less error-prone than entering one at a time), paste:
+   ```
+   FIREBASE_DB=https://<new_name>-default-rtdb.<region>.firebasedatabase.app
+   ORDER_URL=https://<new_name>.bybe.co.il/
+   BOT_KEYWORDS=היי אני רוצה להזמין,אני רוצה להזמין
+   ```
+   Click "Add variables", then delete the leftover empty row at the top of the env-var list.
+5. Scroll to bottom → click "Deploy Web Service". Render redirects to the service's deploy page.
+6. Capture the assigned URL from the page header (format: `https://<new_name>.onrender.com` or `https://<new_name>-xxxx.onrender.com` if the name collided). Save as `artifacts.whatsapp_bot_url` in state.
+7. **Substitute** `YOUR_WHATSAPP_BOT_URL` → `<whatsapp_bot_url>` in the admin HTML (use node one-liner: `fs.readFileSync(...)`, `.split(token).join(url)`, `fs.writeFileSync(...)` — should replace 2 occurrences).
+8. **Redeploy the admin site** so the real bot URL reaches production: `firebase deploy --only hosting:admin --project <new_name>` (use target name `admin`, not the full site ID).
+
+**The bot's first ~3 minutes:** Render builds (~1 min `npm install`), then the bot starts and begins Baileys' handshake with WhatsApp. The `/qr-view` endpoint will show "ממתין ל-QR..." until the first QR is generated, at which point the admin page's iframe will display it for scanning.
+
+**⚠️ Baileys/Node-22 pitfall (learned 2026-04-19 debugging pizza-test-ver-05):** Render's default Node version is 22.x. `@whiskeysockets/baileys@6.7.21` (the latest in the 6.x line) **crashes** in `lib/Utils/noise-handler.js:88` with `TypeError: Cannot read properties of undefined (reading 'public')` on the WhatsApp handshake under Node 22. The bot falls into a crash-restart loop every 5 seconds, never emits a QR, and shows `{"connected":false}` forever. **The template repo is already fixed** — it uses the community fork package `baileys` at version `7.0.0-rc.9` and pins `"engines": { "node": "20.x" }` in `package.json` so Render's build selects Node 20. Do not revert these pins when updating the bot. If you see this crash pattern in Render logs, check `package.json` first — someone may have bumped Baileys back to the broken version.
+
+**⚠️ RTDB rule for `botAuth`:** the bot makes **unauthenticated** PUT/GET calls to `settings/botAuth/*` to persist the Baileys session (so the manager doesn't re-scan QR on every restart). The template's `database.rules.json` already includes `"botAuth": { ".read": true, ".write": true }` — without that rule, writes fall through to the default `.write: false` and die silently. Sessions won't persist (QR needed on every cold-start) but the bot still runs. If you notice a pizzeria where the bot always requires a new QR after every deploy, check that the `botAuth` rule made it into the cloned `database.rules.json`.
+
+**Free-tier caveat:** Render free Web Services sleep after 15 min of inactivity. The first request after sleep takes ~50 seconds to respond. For a production pizzeria, mention two options in the final summary:
+- Upgrade to Starter ($7/month), or
+- Point a free UptimeRobot HTTP ping at `https://<new_name>.onrender.com/` every 5–10 min.
+
+Do not block on the keep-alive decision — finish the pipeline and let the user choose later.
 
 ---
 
