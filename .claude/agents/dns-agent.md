@@ -43,7 +43,13 @@ Navigate: `https://jetclients.co.il/clientarea.php?action=domains`
    - Type: pick from dropdown (A, CNAME, TXT, etc.). Changing the type swaps the data field below.
    - For CNAME: the data field becomes "שם קנוני" (canonical name) — type the target FQDN without trailing dot.
 7. Click "שמירת שינויים" (Save changes). Dialog closes, record appears in the zone list.
-8. Verify propagation via `nslookup -type=<TYPE> <fqdn> @8.8.8.8` and `@1.1.1.1` — in practice JetDNS propagates within seconds.
+8. **CRITICAL — verify the record actually saved before moving on.** Do NOT rely on the SOA serial increment as proof — JetDNS bumps the serial once per zone-change event, not once per record, so "serial went from N to N+1 after I clicked save" is true whether zero or one of your records actually persisted. To verify:
+   - Set the page-size dropdown (bottom-left of the records table) to `"הכל"` so all records render on one page, and scroll to confirm your new row is visible with the correct `Value` target. OR
+   - Note the total record count BEFORE clicking save and confirm it increased by exactly 1.
+
+   This matters especially when adding two CNAMEs back-to-back (order + admin). On pizza-test-ver-06 the first saved but the second silently failed — caught only when the admin domain wouldn't load after "verified" in Firebase. The SOA serial did increment both times, so the false positive was convincing. Don't trust serial-only.
+
+9. Verify propagation via `nslookup -type=<TYPE> <fqdn> @8.8.8.8` and `@1.1.1.1` — in practice JetDNS propagates within seconds.
 
 ## Procedure — verify (propagation)
 

@@ -47,8 +47,8 @@ Run these stages in order. Persist state to `<target_root>\.orchestrator-state.j
 | 6 | **domain-agent** | Confirms `bybe.co.il` nameservers are JetDNS. Warns if not. |
 | 7 | **firebase-agent** (browser) | "Add custom domain" → `<new_name>.bybe.co.il` on the **order** site → Firebase returns **CNAME** (Quick setup for subdomains). |
 | 7b | **firebase-agent** (browser) | "Add custom domain" → `<new_name>-admin.bybe.co.il` on the **admin** site → Firebase returns **CNAME**. |
-| 8 | **dns-agent** | Add CNAME `<new_name>` → order site CNAME target in JetDNS. JetClients אמור להיות מחובר אוטומטי; עוצר רק אם Session פג. |
-| 8b | **dns-agent** | Add CNAME `<new_name>-admin` → admin site CNAME target in JetDNS (same session). |
+| 8 | **dns-agent** | Add CNAME `<new_name>` → order site CNAME target in JetDNS. JetClients אמור להיות מחובר אוטומטי; עוצר רק אם Session פג. **After save, verify the row is visible in the records list — don't trust the SOA serial increment alone (it bumps once per zone-change event regardless of how many records actually persisted). See dns-agent step 8 for the verification procedure.** |
+| 8b | **dns-agent** | Add CNAME `<new_name>-admin` → admin site CNAME target in JetDNS (same session). Same post-save verification rule. Confirm BOTH CNAMEs are listed before moving to Stage 9. |
 | 9 | **firebase-agent** (browser) | Click **Verify** on the order domain dialog. Firebase confirms + starts SSL provisioning. Once the click returns (verified or "records not yet detected"), move on — do not poll. |
 | 9b | **firebase-agent** (browser) | Click **Verify** on the admin domain dialog. Same — fire-and-forget. |
 
