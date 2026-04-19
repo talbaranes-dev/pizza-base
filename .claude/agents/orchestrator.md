@@ -75,7 +75,6 @@ Ask questions interactively in Hebrew. Store all answers in the state file under
 | Field | Question | Fills | Default if skipped |
 |-------|----------|-------|-------|
 | `whatsapp_phone` | "מספר WhatsApp לקבלת הזמנות? (Enter לדלג)" | `YOUR_WHATSAPP_PHONE` | leave placeholder |
-| `whatsapp_bot_url` | "כתובת שרת בוט WhatsApp? (Enter לדלג)" | `YOUR_WHATSAPP_BOT_URL` | leave placeholder |
 | `google_places_key` | "Google Places API key להשלמת כתובות? (Enter לדלג)" | `YOUR_GOOGLE_PLACES_API_KEY` | leave placeholder |
 | `hours_weekday` | "שעות פעילות ימים א'-ה'? (דוגמה: `13:00-23:00`, Enter = ברירת מחדל)" | `YOUR_HOURS_WEEKDAY` | `13:00 - 23:00` |
 | `hours_friday` | "שעות פעילות יום שישי? (דוגמה: `13:00-15:00`, כתוב `סגור` אם סגורים, Enter = ברירת מחדל)" | `YOUR_HOURS_FRIDAY` | `13:00 - 15:00` |
@@ -161,12 +160,12 @@ Things still left for the user (not done by agents):
     "address": "רחוב הרצל 10",
     "city": "תל אביב",
     "whatsapp_phone": "972501234567",
-    "whatsapp_bot_url": "",
     "google_places_key": ""
   },
   "artifacts": {
     "firebase_api_key": "AIza...",
     "firebase_db_url": "https://pizza-gluten-default-rtdb.firebaseio.com",
+    "whatsapp_bot_url": "https://pizza-gluten.onrender.com",
     "txt_record": "firebase-verify=...",
     "a_records": [],
     "final_url": null
