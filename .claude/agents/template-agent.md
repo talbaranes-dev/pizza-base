@@ -105,9 +105,9 @@ node -e "const c=require('crypto'); console.log(c.createHash('sha256').update(pr
 |---|---|---|
 | `const MANAGER_PASSWORD_HASH = "DEMO_NO_PASSWORD";` | `const MANAGER_PASSWORD_HASH = "<sha256(manager_password_raw)>";` | always (mandatory field) |
 | `const MANAGER_PANEL_PASSWORD = '1';` | `const MANAGER_PANEL_PASSWORD = '<manager_password_raw>';` | always (admin index.html only) |
-| `'YOUR_WHATSAPP_PHONE'` | `'<whatsapp_phone>'` | if `whatsapp_phone` non-empty |
-| `'YOUR_WHATSAPP_BOT_URL'` | `'<whatsapp_bot_url>'` | if `whatsapp_bot_url` non-empty |
-| `src="YOUR_WHATSAPP_BOT_URL/qr-view"` | `src="<whatsapp_bot_url>/qr-view"` | if `whatsapp_bot_url` non-empty |
+| `'YOUR_WHATSAPP_PHONE'` | `'<business.phone>'` | if `phone` non-empty — despite the name, this token is actually used for BitPay/PayBox merchant phone, not WhatsApp. Fed from the same `phone` field as `YOUR_PHONE` (user confirmed 2026-04-19 they're always the same in practice). |
+| `'YOUR_WHATSAPP_BOT_URL'` | `'<whatsapp_bot_url>'` (from Stage 5.7 Render deploy, not user input) | if set by Stage 5.7 |
+| `src="YOUR_WHATSAPP_BOT_URL/qr-view"` | `src="<whatsapp_bot_url>/qr-view"` | if set by Stage 5.7 |
 | `YOUR_GOOGLE_PLACES_API_KEY` | `<google_places_key>` | if `google_places_key` non-empty |
 
 Apply to all HTML files in the target tree (`**/*.html`). The exact string match is critical — use `sed` with the full const declaration (including semicolon) to avoid partial matches.
