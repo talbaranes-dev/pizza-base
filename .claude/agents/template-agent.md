@@ -64,6 +64,7 @@ Do these substitutions **inside the target tree only** (never edit the source):
 | `YOUR_DISPLAY_NAME` | `<display_name>` | — |
 | `YOUR_ORDER_DOMAIN` | `<new_name>.bybe.co.il` | — |
 | `YOUR_ADMIN_DOMAIN` | `<new_name>-admin.bybe.co.il` | — |
+| `YOUR_DOMAIN` | `<new_name>.bybe.co.il` | — |
 | `YOUR_HOURS_WEEKDAY` | `<business.hours_weekday>` | `13:00 - 23:00` |
 | `YOUR_HOURS_FRIDAY` | `<business.hours_friday>` | `13:00 - 15:00` |
 | `YOUR_HOURS_SATURDAY` | `<business.hours_saturday>` | `19:00 - 23:00` |
@@ -131,6 +132,34 @@ Before handing off to firebase-agent, **extract the region from the template's D
 - `*.asia-southeast1.firebasedatabase.app` → region = `asia-southeast1`
 
 firebase-agent needs this to pick the right option in the "Create Database" wizard. Mismatched region = silently broken site (the DB URL firebase-agent inserts must match).
+
+### 6. Write site manifest (for sync-derivatives-agent)
+
+After all substitutions, write `<target_root>\.bybe-site.json` recording every value used. The `sync-derivatives-agent` reads this on every base update so it can re-apply the same substitution table to incoming patches.
+
+```json
+{
+  "new_name": "<new_name>",
+  "display_name": "<display_name>",
+  "phone":            "<business.phone or empty>",
+  "address":          "<business.address or empty>",
+  "city":             "<business.city or empty>",
+  "hours_weekday":    "<business.hours_weekday or default>",
+  "hours_friday":     "<business.hours_friday or default>",
+  "hours_saturday":   "<business.hours_saturday or default>",
+  "manager_password_hash":  "<sha256 of manager_password_raw>",
+  "manager_panel_password": "<manager_password_raw>",
+  "whatsapp_phone":   "<business.phone or empty>",
+  "whatsapp_bot_url": "",
+  "google_places_key":"<business.google_places_key or empty>",
+  "firebase_api_key": "",
+  "database_url":     "",
+  "db_region":        "<detected in step 5>",
+  "last_synced_base_sha": "<git -C <source_root> rev-parse HEAD>"
+}
+```
+
+`firebase_api_key`, `database_url`, and `whatsapp_bot_url` start empty — firebase-agent and orchestrator Stage 5.7 fill them in later. When they do, they MUST also update the manifest fields (the manifest is the source of truth for sync). Pretty-print with 2-space indent, UTF-8, no BOM.
 
 ## Output
 
