@@ -2,5 +2,8 @@
 .claude/worktrees/
 .claude/agents/state/
 .tmp-sync/
+.tmp-promote/
+.tmp-promote-test/
+.tmp-test/
 firebase-debug.log
 *-debug.log
