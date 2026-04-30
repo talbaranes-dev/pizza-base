@@ -1431,7 +1431,20 @@ async function sendApproval(fbKey, minutes) {
   }
 }
 
+var _lastPrintedOrderId = null;
+var _lastPrintedAt = 0;
 function printOrderFromData(order, estimatedMinutes) {
+  // Per-order dedup: block the same order from printing twice within 5s
+  // (auto-double-fire from listener + local creation). Manager can still
+  // intentionally re-print after 5s — this only blocks accidental dupes.
+  if(order && order.id && _lastPrintedOrderId === order.id && Date.now() - _lastPrintedAt < 5000) {
+    console.log('BLOCKED duplicate print of order', order.id);
+    return;
+  }
+  if(order && order.id) {
+    _lastPrintedOrderId = order.id;
+    _lastPrintedAt = Date.now();
+  }
   const items = order.items || [];
   if(!items.length) return;
   const W = 32;
