@@ -1431,16 +1431,7 @@ async function sendApproval(fbKey, minutes) {
   }
 }
 
-var _printLock = false;
-var _lastPrintedOrderId = null;
 function printOrderFromData(order, estimatedMinutes) {
-  // מנע הדפסה כפולה - נעילה עד שההדפסה מסתיימת
-  if(_printLock) { console.log('BLOCKED double print'); return; }
-  // מנע הדפסה כפולה לפי מזהה הזמנה
-  if(_lastPrintedOrderId && _lastPrintedOrderId === order.id) { console.log('BLOCKED same order print'); _lastPrintedOrderId = null; return; }
-  _lastPrintedOrderId = order.id;
-  _printLock = true;
-  setTimeout(() => { _printLock = false; }, 30000);
   const items = order.items || [];
   if(!items.length) return;
   const W = 32;
@@ -1551,6 +1542,7 @@ function printOrderFromData(order, estimatedMinutes) {
   bonArea.id = 'bon-print-area';
   bonArea.innerHTML = headerHtml + bonHtml + footerHtml;
   document.body.appendChild(bonArea);
+  window._authPrint(); // אשר הדפסה אחת בלבד
   setTimeout(()=>{ window.print(); setTimeout(()=>bonArea.remove(),3000); }, 300);
 }
 
@@ -5899,7 +5891,13 @@ function addUpsellItem(item,e){
 
 
 
+window._authPrint = function(){};
+
+var _doPrintLock = false;
 async function doPrint(){
+  if(_doPrintLock) { console.log('doPrint LOCKED'); return; }
+  _doPrintLock = true;
+  setTimeout(() => { _doPrintLock = false; }, 10000);
   const _skip = window._skipPrintValidation;
   window._skipPrintValidation = false;
   const name=document.getElementById("inp-name").value.trim();
@@ -6428,7 +6426,10 @@ function renderActiveOrders() {
       </div>
       <div style="font-size:0.85em;color:#888;margin-bottom:4px;">${o.type==='delivery'?'🛵 '+o.address:'🏃 איסוף'} | ${o.date||''} ${o.time||''}</div>
       <div style="font-size:0.85em;margin-bottom:8px;">${itemsList}</div>
-      <button onclick="markOrderDone('${o._fbKey||''}')" style="width:100%;padding:8px;background:#1e7a3a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:700;">סמן כהושלם ✅</button>
+      <div style="display:flex;gap:8px;">
+        <button onclick="markOrderDone('${o._fbKey||''}')" style="flex:1;padding:8px;background:#1e7a3a;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:700;">סמן כהושלם ✅</button>
+        <button id="sms-btn-${o._fbKey||''}" onclick="showSmsPopup('${o._fbKey||''}','${(o.phone||'').replace(/'/g,'')}','${(o.name||'').replace(/'/g,'')}')" style="flex:1;padding:8px;background:${o.smsSent?'#25D366':'#e74c3c'};color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:700;">${o.smsSent?'✅ SMS נשלח':'📱 SMS ללקוח'}</button>
+      </div>
     </div>`;
   }).join('');
   // Start timers
@@ -6465,6 +6466,49 @@ function renderActiveOrders() {
     if(window._activeTimers[timerKey]) clearInterval(window._activeTimers[timerKey]);
     window._activeTimers[timerKey] = setInterval(updateTimer, 1000);
   });
+}
+
+function showSmsPopup(fbKey, phone, name) {
+  if(!phone) { showToast('אין מספר טלפון להזמנה זו'); return; }
+  const existing = document.getElementById('sms-time-overlay');
+  if(existing) existing.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'sms-time-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:18px;padding:24px 20px;width:300px;direction:rtl;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+      <div style="font-size:1.5em;margin-bottom:4px;">📱</div>
+      <div style="font-weight:800;font-size:1.05em;margin-bottom:4px;">שלח WhatsApp ל${name||phone}</div>
+      <div style="color:#888;font-size:0.88em;margin-bottom:16px;">בחר זמן מוערך להגעה / מוכנות:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+        ${[5,10,15,20,25,30].map(m=>`
+          <button onclick="sendSmsTime('${fbKey}','${phone}','${name||''}',${m})" style="padding:12px 0;background:#25D366;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:1em;font-weight:800;">${m} דק'</button>
+        `).join('')}
+      </div>
+      <button onclick="document.getElementById('sms-time-overlay').remove()" style="width:100%;padding:10px;background:#f0f0f0;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-weight:700;color:#555;">ביטול</button>
+    </div>`;
+  overlay.onclick = e => { if(e.target===overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+
+async function sendSmsTime(fbKey, phone, name, minutes) {
+  document.getElementById('sms-time-overlay')?.remove();
+  // בנה מספר בינלאומי
+  let intlPhone = phone.replace(/[\s\-()]/g,'');
+  if(intlPhone.startsWith('0')) intlPhone = '972' + intlPhone.substring(1);
+  const msg = `היי ${name||''}! ההזמנה שלך מ-YOUR_DISPLAY_NAME תהיה מוכנה בעוד כ-${minutes} דקות 🍕`;
+  try {
+    await botSend(intlPhone, msg);
+    await fbSet('orders/'+fbKey+'/smsSent', true);
+    // עדכן גם מקומית
+    const ord = orders.find(o=>o._fbKey===fbKey);
+    if(ord) ord.smsSent = true;
+    showToast(`✅ הודעה נשלחה ל${name||phone}`);
+    const btn = document.getElementById('sms-btn-'+fbKey);
+    if(btn){ btn.style.background='#25D366'; btn.textContent='✅ SMS נשלח'; }
+  } catch(e) {
+    showToast('שגיאה בשליחת הודעה');
+  }
 }
 
 async function markOrderDone(fbKey) {
@@ -6750,6 +6794,7 @@ function printOrderFromHistory(order) {
   bonArea.id = 'bon-print-area';
   bonArea.innerHTML = lines.map(l=>'<div>'+(l||'&nbsp;')+'</div>').join('');
   document.body.appendChild(bonArea);
+  window._authPrint();
   setTimeout(()=>{ window.print(); setTimeout(()=>bonArea.remove(),1000); }, 300);
 }
 
@@ -7667,6 +7712,7 @@ function printUnpaidList() {
   bonArea.id = 'bon-print-area';
   bonArea.innerHTML = lines.map(l=>'<div>'+(l||'&nbsp;')+'</div>').join('');
   document.body.appendChild(bonArea);
+  window._authPrint();
   setTimeout(()=>{ window.print(); setTimeout(()=>bonArea.remove(),1000); }, 300);
 }
 
@@ -8505,6 +8551,7 @@ function exportReportPrint() {
   bonArea.id = 'bon-print-area';
   bonArea.innerHTML = lines.map(l=>'<div>'+(l||'&nbsp;')+'</div>').join('');
   document.body.appendChild(bonArea);
+  window._authPrint();
   setTimeout(()=>{ window.print(); setTimeout(()=>bonArea.remove(),1000); }, 300);
 }
 
